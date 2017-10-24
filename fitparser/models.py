@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+# TODO figure out how to distinguish the various files(filename may not be good enough)
 
 # Create your models here.
 class Point(models.Model):

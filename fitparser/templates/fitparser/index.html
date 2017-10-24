@@ -10,7 +10,7 @@
         {% if existing_points %}
             <ul>
                 {% for point in existing_points %}
-                <li>{{ point.lat }}</li>
+                <li>{{ point.position_lat}},{{point.position_long }},{{point.timestamp }}</li>
                 {% endfor %}
             </ul>
         {% else %}

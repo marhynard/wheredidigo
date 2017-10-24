@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Point Viewer</title>
+    </head>
+
+    <body>
+        <h1>This is the Point Viewer!</h1>
+
+        {% if existing_points %}
+            <ul>
+                {% for point in existing_points %}
+                <li>{{ point.lat }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong>There are no points present.</strong>
+        {% endif %}
+
+        <!--<a href="/rango/about/">About</a>-->
+    </body>
+</html>

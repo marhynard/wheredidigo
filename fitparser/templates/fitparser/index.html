@@ -1,18 +1,40 @@
 <!DOCTYPE html>
 <html>
+
+	
     <head>
         <title>Point Viewer</title>
     </head>
 
     <body>
         <h1>This is the Point Viewer!</h1>
-
+		<style>
+			table,th,td{
+				border:1x solid black;
+			}
+		</style>
         {% if existing_points %}
-            <ul>
+
+			<table style="width:100%">
+				<tr>
+					<th>time</th>
+					<th>distance</th>
+					<th>Latitude</th>
+					<th>Longitude</th>
+					<th>altitude</th>
+				</tr>
+            
                 {% for point in existing_points %}
-                <li>{{ point.position_lat}},{{point.position_long }},{{point.timestamp }}</li>
+					<tr>
+						<td>{{ point.timestamp }}</td>
+						<td>{{ point.distance }}</td>
+						<td>{{ point.position_lat }}</td>
+						<td>{{ point.position_long }}</td>
+						<td>{{ point.altitude }}</td>
+					</tr>
                 {% endfor %}
-            </ul>
+            
+			</table>
         {% else %}
             <strong>There are no points present.</strong>
         {% endif %}

@@ -9,7 +9,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
-  <title>Hello World!</title>
+  <title>Hello World!- {{ test1 }}</title>
   <!--<script src="../Build/Cesium/Cesium.js"></script>-->
   <script src="{% static 'Cesium-1.38/Build/Cesium/Cesium.js' %}"></script>
   <style>
@@ -21,8 +21,6 @@
 </head>
 <body>
   <div id="cesiumContainer"></div>
-  <script>
-    var viewer = new Cesium.Viewer('cesiumContainer');
-  </script>
+  <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>

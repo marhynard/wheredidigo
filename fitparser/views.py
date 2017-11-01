@@ -2,7 +2,9 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render
-from django.views.generic import TemplateView # Import TemplateView
+#from django.views.generic import TemplateView # Import TemplateView
+from django.http import HttpResponse
+import json
 from .models import Point
 
 
@@ -14,8 +16,16 @@ def index(request):
     #return HttpResponse("Hello, world. You're at the fitparse index.")
 
 def helloworld(request):
-    context = {}
+    context = {'test1':'value1'}
     return render(request,'fitparser/HelloWorld.html',context)
     
 #class HelloWorldPageView(TemplateView):
 #    template_name = "fitparser/HelloWorld.html"
+    
+
+def testJson(request):
+    data = {}
+    data['key1'] = 'value1'
+    data['key2'] = 'value2'
+    response = HttpResponse(json.dumps(data),content_type="application/json")
+    print response;

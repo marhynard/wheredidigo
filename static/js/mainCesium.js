@@ -10,7 +10,8 @@ var viewer = new Cesium.Viewer('cesiumContainer',{
 
 
 function getPointsList(){
-    //var n=JSON.parse({{js_data}});
+    //var n=JSON.parse(data);
+
     let pointslist = [-75, 37,-95, 36,-125, 37];
 
     return pointslist;

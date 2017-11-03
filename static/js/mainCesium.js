@@ -20,10 +20,12 @@ function getPointsList(){
     for(x in tmp){
     
         var z=tmp[x];
-        var lat= z.fields.position_lat  * ( 180 / power );
-        var lon= z.fields.position_long  * ( 180 / power );
+        var lat= z.fields.position_lat; //  * ( 180 / power );
+        var lon= z.fields.position_long; //  * ( 180 / power );
+        //var alt = z.fields.altitude;
         pointslist.push(lon);
         pointslist.push(lat);
+       // pointslist.push(alt);
     }
 
     

@@ -5,7 +5,7 @@ from django.shortcuts import render
 #from django.views.generic import TemplateView # Import TemplateView
 from django.http import HttpResponse
 from django.core import serializers
-import json
+#import json
 from .models import Point
 
 
@@ -23,9 +23,10 @@ def helloworld(request):
     existing_points = Point.objects.all()
     #semicircles * ( 180 / 2^31 )
     
-    
-#    for point in existing_points:
-#        print point
+    for point in existing_points:
+        point.position_lat = float(point.position_lat) * 180 / 2147483648;
+        point.position_long = float(point.position_long) * 180 / 2147483648;
+        #print point.position_lat,point.position_long
     #js_data = json.dumps(existing_points)
     js_data = serializers.serialize('json',existing_points)
     context = {'js_data': js_data}
@@ -42,3 +43,4 @@ def helloworld(request):
 #    data['key2'] = 'value2'
 #    response = HttpResponse(json.dumps(data),content_type="application/json")
 #    print response;
+    

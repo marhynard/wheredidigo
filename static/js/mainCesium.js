@@ -10,9 +10,23 @@ var viewer = new Cesium.Viewer('cesiumContainer',{
 
 
 function getPointsList(){
-    //var n=JSON.parse(data);
+    var t = js_data;
+    var tmp=JSON.parse(js_data);
 
-    let pointslist = [-75, 37,-95, 36,-125, 37];
+    let power = 2147483648;
+    
+    let pointslist = [];//[-75, 37,-95, 36,-125, 37];
+
+    for(x in tmp){
+    
+        var z=tmp[x];
+        var lat= z.fields.position_lat  * ( 180 / power );
+        var lon= z.fields.position_long  * ( 180 / power );
+        pointslist.push(lon);
+        pointslist.push(lat);
+    }
+
+    
 
     return pointslist;
     

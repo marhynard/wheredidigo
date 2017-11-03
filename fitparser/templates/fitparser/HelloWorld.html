@@ -21,8 +21,8 @@
 </head>
 <body>
   <div id="cesiumContainer"></div>
-  <script>
-      var data = '{{js_data}}';  
+  <script type="text/javascript">
+      var js_data = '{{js_data|safe}}';  
   </script>
   <script src="{% static 'js/mainCesium.js' %}"></script>
 </body>

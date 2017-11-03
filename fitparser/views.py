@@ -16,6 +16,8 @@ def index(request):
     return render(request,'fitparser/index.html',context)
     #return HttpResponse("Hello, world. You're at the fitparse index.")
 
+
+#TODO add the ability to get specific tracks out
 def helloworld(request):
     #existing_points = Point.objects.values_list('position_long','position_lat')
     existing_points = Point.objects.all()

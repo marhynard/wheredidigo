@@ -36,6 +36,57 @@ apoint = {'altitude'            : 0.0,
           'timestamp'           : -1
         }
 
+
+
+#http://www.johndcook.com/python_longitude_latitude.html
+def distance_on_unit_sphere(lat1, long1, lat2, long2):
+ 
+    # Convert latitude and longitude to 
+    # spherical coordinates in radians.
+    degrees_to_radians = math.pi/180.0
+ 
+    # phi = 90 - latitude
+    phi1 = (90.0 - lat1)*degrees_to_radians
+    phi2 = (90.0 - lat2)*degrees_to_radians
+ 
+    # theta = longitude
+    theta1 = long1*degrees_to_radians
+    theta2 = long2*degrees_to_radians
+ 
+    # Compute spherical distance from spherical coordinates.
+ 
+    # For two locations in spherical coordinates 
+    # (1, theta, phi) and (1, theta, phi)
+    # cosine( arc length ) = 
+    #    sin phi sin phi' cos(theta-theta') + cos phi cos phi'
+    # distance = rho * arc length
+ 
+    cos = (math.sin(phi1)*math.sin(phi2)*math.cos(theta1 - theta2) + 
+           math.cos(phi1)*math.cos(phi2))
+    arc = math.acos( cos )
+ 
+    # Remember to multiply arc by the radius of the earth 
+    # in your favorite set of units to get length.
+    return arc* 3959 * 5280#6373km 3959mi 
+ 
+def distance(x1, y1,x2,y2):
+    c1x = float(x1)
+    c1y = float(y1)
+    c2x = float(x2)
+    c2y = float(y2)
+    return distance_on_unit_sphere(c1x, c1y, c2x, c2y)
+	
+#def in_list(lat, lon):
+#	for point in pointList:
+#		if distance(lat,lon,point[1],point[2]) < 40:# distance apart in ft
+#			return True
+#	return False
+
+
+
+
+
+
 def getPointsFromFitFile(filename):
     
     
@@ -99,7 +150,7 @@ def get_track_points(xml_node):
 		altitude = trackpoint.getElementsByTagName("AltitudeMeters")[0]
 		#if in_list(latitude.childNodes[0].data.strip(),longitude.childNodes[0].data.strip()) == False:
 		pointList.append((time.childNodes[0].data.strip(),latitude.childNodes[0].data.strip(),longitude.childNodes[0].data.strip(),altitude.childNodes[0].data.strip()))
-		#print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(time.childNodes[0].data.strip(),latitude.childNodes[0].data.strip(),longitude.childNodes[0].data.strip(),altitude.childNodes[0].data.strip())
+		print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(time.childNodes[0].data.strip(),latitude.childNodes[0].data.strip(),longitude.childNodes[0].data.strip(),altitude.childNodes[0].data.strip())
     print counter
     print len(pointList)
 
@@ -121,7 +172,7 @@ def get_gpx_track_points(xml_node):
         altitude = trackpoint.getElementsByTagName("ele")[0]
         #if in_list(latitude.childNodes[0].data.strip(),longitude.childNodes[0].data.strip()) == False:
         pointList.append((time.childNodes[0].data.strip(),latitude.strip(),longitude.strip(),altitude.childNodes[0].data.strip()))
-        #print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(time.childNodes[0].data.strip(),latitude.strip(),longitude.strip(),altitude.childNodes[0].data.strip())
+        print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(time.childNodes[0].data.strip(),latitude.strip(),longitude.strip(),altitude.childNodes[0].data.strip())
     print counter
     print len(pointList)
 	
@@ -131,75 +182,17 @@ def read_gpx(file_name):
 
 
 
-
-
-#http://www.johndcook.com/python_longitude_latitude.html
-def distance_on_unit_sphere(lat1, long1, lat2, long2):
- 
-    # Convert latitude and longitude to 
-    # spherical coordinates in radians.
-    degrees_to_radians = math.pi/180.0
- 
-    # phi = 90 - latitude
-    phi1 = (90.0 - lat1)*degrees_to_radians
-    phi2 = (90.0 - lat2)*degrees_to_radians
- 
-    # theta = longitude
-    theta1 = long1*degrees_to_radians
-    theta2 = long2*degrees_to_radians
- 
-    # Compute spherical distance from spherical coordinates.
- 
-    # For two locations in spherical coordinates 
-    # (1, theta, phi) and (1, theta, phi)
-    # cosine( arc length ) = 
-    #    sin phi sin phi' cos(theta-theta') + cos phi cos phi'
-    # distance = rho * arc length
- 
-    cos = (math.sin(phi1)*math.sin(phi2)*math.cos(theta1 - theta2) + 
-           math.cos(phi1)*math.cos(phi2))
-    arc = math.acos( cos )
- 
-    # Remember to multiply arc by the radius of the earth 
-    # in your favorite set of units to get length.
-    return arc* 3959 * 5280#6373km 3959mi 
- 
-def distance(x1, y1,x2,y2):
-    c1x = float(x1)
-    c1y = float(y1)
-    c2x = float(x2)
-    c2y = float(y2)
-    return distance_on_unit_sphere(c1x, c1y, c2x, c2y)
-	
-#def in_list(lat, lon):
-#	for point in pointList:
-#		if distance(lat,lon,point[1],point[2]) < 40:# distance apart in ft
-#			return True
-#	return False
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
     
 def main():
     print "main" 
     #fitfile = r'C:\Users\matthew.rhynard\Documents\Python\2096759412.fit'
-    getPointsFromFitFile(r'C:\Users\matthew.rhynard\Documents\Python\2096759412.fit')
+#    getPointsFromFitFile(r'C:\Users\matthew.rhynard\Documents\Python\2096759412.fit')
     tcxFile = r'C:\Users\matthew.rhynard\Documents\kmlfiles\Rode 50.27 mi on 04-11-2015.tcx'
     gpxFile = r'C:\Users\matthew.rhynard\Documents\kmlfiles\activities\20160101-175318-Ride.gpx'
     
-    
+    read_tcx(tcxFile)
+    #read_gpx(gpxFile)    
+        
     
 #files = glob.glob("C:/Users/matthew.rhynard/Documents/kmlfiles/*.tcx")
 

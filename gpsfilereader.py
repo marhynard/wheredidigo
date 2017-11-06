@@ -8,7 +8,7 @@ Created on Fri Oct 13 14:17:39 2017
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE','wheredidigo.settings')
 
-import sys, math, re, getopt, os, glob
+import sys, math, re, argparse, os, glob
 from xml.dom import minidom
 #import simplekml
 #import time
@@ -36,7 +36,7 @@ apoint = {'altitude'            : 0.0,
           'timestamp'           : -1
         }
 
-
+verbose = False
 
 #http://www.johndcook.com/python_longitude_latitude.html
 def distance_on_unit_sphere(lat1, long1, lat2, long2):
@@ -181,17 +181,23 @@ def read_gpx(file_name):
     get_gpx_track_points(xmldoc)
 
 
-
-    
-def main():
-    print "main" 
-    #fitfile = r'C:\Users\matthew.rhynard\Documents\Python\2096759412.fit'
+def processFile(filename):
+    print "Procssing file: ",filename
+    if filename.lower().endswith('.tcx'):
+        read_tcx(filename)
+    elif filename.lower().endswith('.gpx'):
+        read_gpx(filename)
+    elif filename.lower().endswith('.fit'):
+        getPointsFromFitFile(filename)
+    else:
+        print "Not a valid format: ",filename
+        #fitfile = r'C:\Users\matthew.rhynard\Documents\Python\2096759412.fit'
 #    getPointsFromFitFile(r'C:\Users\matthew.rhynard\Documents\Python\2096759412.fit')
-    tcxFile = r'C:\Users\matthew.rhynard\Documents\kmlfiles\Rode 50.27 mi on 04-11-2015.tcx'
-    gpxFile = r'C:\Users\matthew.rhynard\Documents\kmlfiles\activities\20160101-175318-Ride.gpx'
+#    tcxFile = r'C:\Users\matthew.rhynard\Documents\kmlfiles\Rode 50.27 mi on 04-11-2015.tcx'
+#    gpxFile = r'C:\Users\matthew.rhynard\Documents\kmlfiles\activities\20160101-175318-Ride.gpx'
     
-    read_tcx(tcxFile)
-    #read_gpx(gpxFile)    
+    #read_tcx(tcxFile)
+#    read_gpx(gpxFile)    
         
     
 #files = glob.glob("C:/Users/matthew.rhynard/Documents/kmlfiles/*.tcx")
@@ -199,11 +205,6 @@ def main():
 #for file_name in files:
 #	read_tcx(file_name)
 
-
-    
-    
-if __name__ == "__main__":
-    main()
 #for record in fitfile.get_messages('record'):
 #    for record_data in record:
 #        if record_data.units:
@@ -213,3 +214,58 @@ if __name__ == "__main__":
 #        else:
 #            print " * %s: %s" % (record_data.name, record_data.value)
 #    print
+
+    
+    
+def main(args):
+    global verbose
+    
+    if args.verbose:
+        verbose = args.verbose
+    
+    if verbose:
+        print "Starting to process files..." 
+
+    filename = ''    
+    if args.file:
+        if verbose:
+            print "Processing file: ",args.file
+        filename = args.file
+        processFile(filename)
+    
+    else:
+        if args.indir:
+            if verbose:
+                print "Processing Directory: ",args.indir
+            if args.filetype:
+                if verbose:
+                    print "Processing Filetype: ",args.filetype
+                files = glob.glob(os.path.join(args.indir,'*'+args.filetype))
+                
+            else:
+                if verbose:
+                    print "Processing all filetypes: "
+                files = glob.glob(os.path.join(args.indir,'*'))
+            
+            for filename in files:
+                processFile(filename)   
+            
+        else:
+            print "No file or Directory specified"
+    
+    
+
+
+
+    
+    
+if __name__ == "__main__":
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument('--indir'   ,type=str,help="directory which contains the files to be read in")
+    arg_parser.add_argument('--filetype',type=str,help='filetypes to process: .tcx,.gpx,.fit')
+    arg_parser.add_argument('--file'    ,type=str,help='Process the specified file')
+    arg_parser.add_argument('-v','--verbose' ,action="store_true",help='increase output verbosity')
+    
+    args = arg_parser.parse_args()
+    
+    main(args)

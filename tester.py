@@ -22,11 +22,25 @@ fitfile = FitFile(r'C:\Users\matthew.rhynard\Documents\Python\2096759412.fit')
 def testViews():
     print "testViews"
     parserviews.helloworld(None)
-    
+
+
+def testPointsDatabase():
+    print "testPointsDatabase"
+    existing_points = Point.objects.all()
+    semicirclesconversion = ( float(180) / float(2147483648) )
+    count = 0    
+    for point in existing_points:
+        count += 1
+#        print point.fileid
+#        point.position_lat = float(point.position_lat) * semicirclesconversion;
+#        point.position_long = float(point.position_long) * semicirclesconversion;
+#        print point.position_lat,point.position_long
+    print count
     
 def main():
     print "main" 
-    testViews()
+    #testViews()
+    testPointsDatabase()
     
     
     

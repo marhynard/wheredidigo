@@ -2,10 +2,16 @@
 from __future__ import unicode_literals
 
 from django.db import models
-# TODO figure out how to distinguish the various files(filename may not be good enough)
+# TODO figure out how to distinguish the various files(filename may not be good enough, may need to come up with another way also)
 
 # Create your models here.
+
+class Fileinfo(models.Model):
+    filename = models.CharField(max_length=75)
+    
+
 class Point(models.Model):
+    fileid              = models.ForeignKey(Fileinfo,on_delete=models.CASCADE) #fileid for the file
     altitude            = models.FloatField(default=0.0) #m
     cadence             = models.FloatField(default=0.0) #rpm
     distance            = models.FloatField(default=0.0) #m

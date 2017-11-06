@@ -19,7 +19,7 @@ django.setup()
 
 from fitparse import FitFile
 
-from fitparser.models import Point
+from fitparser.models import Fileinfo,Point
 
 
 
@@ -88,13 +88,19 @@ def distance(x1, y1,x2,y2):
 
 
 def getPointsFromFitFile(filename):
-    
-    
+
+    basename = os.path.basename(filename)
+    f = Fileinfo(filename=basename)
+    f.save()
+    fileinfo = Fileinfo.objects.get(filename=basename)
+    #TODO make sure each file is unique
     fitfile = FitFile(filename)
+    
     for record in fitfile.get_messages('record'):
         for record_data in record:
             apoint[record_data.name] = record_data.value
         newPoint = Point(
+                fileid              = fileinfo,
                 altitude            = apoint['altitude'],
                 cadence             = apoint['cadence'],
                 distance            = apoint['distance'],
@@ -106,61 +112,48 @@ def getPointsFromFitFile(filename):
                 speed               = apoint['speed'],
                 timestamp           = apoint['timestamp'],
                 )
-        newPoint.save()
-        print apoint
-        print
+        #newPoint.save()
+        if verbose:
+            print apoint
+            print
  
-def getPointsFromXMLFile(filename):
+
+def read_tcx(filename):
+    #TODO make sure each file is unique
+    basename = os.path.basename(filename)
+    f = Fileinfo(filename=basename)
+    f.save()
+    fileinfo = Fileinfo.objects.get(filename=basename)
     
+    xml_node = minidom.parse(filename)
     
-    fitfile = FitFile(filename)
-    for record in fitfile.get_messages('record'):
-        for record_data in record:
-            apoint[record_data.name] = record_data.value
-        newPoint = Point(
-                altitude            = apoint['altitude'],
-                cadence             = apoint['cadence'],
-                distance            = apoint['distance'],
-                enhanced_altitude   = apoint['enhanced_altitude'],
-                enhanced_speed      = apoint['enhanced_speed'],
-                fractional_cadence  = apoint['fractional_cadence'],
-                position_lat        = apoint['position_lat'],
-                position_long       = apoint['position_long'],
-                speed               = apoint['speed'],
-                timestamp           = apoint['timestamp'],
-                )
-        newPoint.save()
-        print apoint
-        print    
-
-
-
-def get_track_points(xml_node):
     track = xml_node.getElementsByTagName("Trackpoint")
     counter = 0
     
-    pointList = []
-    
     for trackpoint in track:
-		counter = counter + 1
-		time = trackpoint.getElementsByTagName("Time")[0]
-		position = trackpoint.getElementsByTagName("Position")
-		latitude = position[0].getElementsByTagName("LatitudeDegrees")[0]
-		longitude = position[0].getElementsByTagName("LongitudeDegrees")[0]
-		altitude = trackpoint.getElementsByTagName("AltitudeMeters")[0]
+        counter = counter + 1
+        time = trackpoint.getElementsByTagName("Time")[0]
+        position = trackpoint.getElementsByTagName("Position")
+        lat = position[0].getElementsByTagName("LatitudeDegrees")[0]
+        lon = position[0].getElementsByTagName("LongitudeDegrees")[0]
+        alt = trackpoint.getElementsByTagName("AltitudeMeters")[0]
+        newPoint = Point(
+                fileid              = fileinfo,
+                altitude            = alt,
+                position_lat        = lat * 2147483648 / 180,
+                position_long       = lon * 2147483648 / 180,
+                timestamp           = time,
+                )
+        newPoint.save()
 		#if in_list(latitude.childNodes[0].data.strip(),longitude.childNodes[0].data.strip()) == False:
-		pointList.append((time.childNodes[0].data.strip(),latitude.childNodes[0].data.strip(),longitude.childNodes[0].data.strip(),altitude.childNodes[0].data.strip()))
-		print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(time.childNodes[0].data.strip(),latitude.childNodes[0].data.strip(),longitude.childNodes[0].data.strip(),altitude.childNodes[0].data.strip())
-    print counter
-    print len(pointList)
-
-#print xmldoc.toxml()
-def read_tcx(file_name):
-    xmldoc = minidom.parse(file_name)
-    get_track_points(xmldoc)
+		#pointList.append((time.childNodes[0].data.strip(),latitude.childNodes[0].data.strip(),longitude.childNodes[0].data.strip(),altitude.childNodes[0].data.strip()))
+        if verbose:
+            print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(time.childNodes[0].data.strip(),latitude.childNodes[0].data.strip(),longitude.childNodes[0].data.strip(),altitude.childNodes[0].data.strip())
+        print counter
     
 
 def get_gpx_track_points(xml_node):
+    #TODO make sure each file is unique
     track = xml_node.getElementsByTagName("trkpt")
     counter = 0
     pointList = []

@@ -1,5 +1,10 @@
 
+//TODO add a timeline for the viewer
+//TODO add the points with time
 
+//TODO create a heatmap based on time selected
+
+//TODO add the ability to toggle tracks
 
 
 var viewer = new Cesium.Viewer('cesiumContainer',{
@@ -8,7 +13,7 @@ var viewer = new Cesium.Viewer('cesiumContainer',{
 });
 
 
-
+//TODO separate the points by tracks(files)
 function getPointsList(){
     var t = js_data;
     var tmp=JSON.parse(js_data);
@@ -36,7 +41,7 @@ function getPointsList(){
 
 
 
-    
+//TODO add multiple tracks onto the cesium viewer    
 var glowingLine = viewer.entities.add({
     name : 'Glowing orange line on the surface',
     polyline : {

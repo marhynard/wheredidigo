@@ -87,15 +87,20 @@ def distance(x1, y1,x2,y2):
 
 
 
-def getPointsFromFitFile(filename):
+def read_fit(file_name):
 
-    basename = os.path.basename(filename)
-    f = Fileinfo(filename=basename)
-    f.save()
+    basename = os.path.basename(file_name)
+    if Fileinfo.objects.filter(filename=basename).count() == 1:
+        print "File exists: "
+    else:
+        print "File doesn't exist: "
+        f = Fileinfo(filename=basename)
+        f.save()
+        
     fileinfo = Fileinfo.objects.get(filename=basename)
-    #TODO make sure each file is unique
-    fitfile = FitFile(filename)
-    
+
+    fitfile = FitFile(file_name)
+#TODO add some checks to only insert points that are not in already    
     for record in fitfile.get_messages('record'):
         for record_data in record:
             apoint[record_data.name] = record_data.value
@@ -112,66 +117,100 @@ def getPointsFromFitFile(filename):
                 speed               = apoint['speed'],
                 timestamp           = apoint['timestamp'],
                 )
-        #newPoint.save()
+        newPoint.save()
         if verbose:
             print apoint
             print
  
 
-def read_tcx(filename):
-    #TODO make sure each file is unique
-    basename = os.path.basename(filename)
-    f = Fileinfo(filename=basename)
-    f.save()
+def read_tcx(file_name):
+
+    basename = os.path.basename(file_name)
+    
+    if Fileinfo.objects.filter(filename=basename).count() == 1:
+        print "File exists: "
+    else:
+        print "File doesn't exist: "
+        f = Fileinfo(filename=basename)
+        f.save()
+    
     fileinfo = Fileinfo.objects.get(filename=basename)
     
-    xml_node = minidom.parse(filename)
+    xml_node = minidom.parse(file_name)
     
     track = xml_node.getElementsByTagName("Trackpoint")
     counter = 0
-    
+#TODO add some checks to only insert points that are not in already    
     for trackpoint in track:
         counter = counter + 1
-        time = trackpoint.getElementsByTagName("Time")[0]
-        position = trackpoint.getElementsByTagName("Position")
-        lat = position[0].getElementsByTagName("LatitudeDegrees")[0]
-        lon = position[0].getElementsByTagName("LongitudeDegrees")[0]
-        alt = trackpoint.getElementsByTagName("AltitudeMeters")[0]
+        time_node       = trackpoint.getElementsByTagName("Time")[0]
+        position_node   = trackpoint.getElementsByTagName("Position")
+        latitude_node   = position_node[0].getElementsByTagName("LatitudeDegrees")[0]
+        longitude_node  = position_node[0].getElementsByTagName("LongitudeDegrees")[0]
+        altitude_node   = trackpoint.getElementsByTagName("AltitudeMeters")[0]
+        
+        time        = time_node.childNodes[0].data.strip()
+        latitude    = latitude_node.childNodes[0].data.strip()
+        longitude   = longitude_node.childNodes[0].data.strip()
+        altitude    = altitude_node.childNodes[0].data.strip()
+        
+        if verbose:
+            print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(time,latitude,longitude,altitude)
+        
+        
         newPoint = Point(
                 fileid              = fileinfo,
-                altitude            = alt,
-                position_lat        = lat * 2147483648 / 180,
-                position_long       = lon * 2147483648 / 180,
+                altitude            = altitude,
+                position_lat        = float(latitude) * 2147483648 / 180,
+                position_long       = float(longitude) * 2147483648 / 180,
                 timestamp           = time,
                 )
         newPoint.save()
-		#if in_list(latitude.childNodes[0].data.strip(),longitude.childNodes[0].data.strip()) == False:
-		#pointList.append((time.childNodes[0].data.strip(),latitude.childNodes[0].data.strip(),longitude.childNodes[0].data.strip(),altitude.childNodes[0].data.strip()))
-        if verbose:
-            print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(time.childNodes[0].data.strip(),latitude.childNodes[0].data.strip(),longitude.childNodes[0].data.strip(),altitude.childNodes[0].data.strip())
-        print counter
+    print counter
     
+def read_gpx(file_name):
+    
+    basename = os.path.basename(file_name)
+    
+    if Fileinfo.objects.filter(filename=basename).count() == 1:
+        print "File exists: "
+    else:
+        print "File doesn't exist: "
+        f = Fileinfo(filename=basename)
+        f.save()
+    
+    fileinfo = Fileinfo.objects.get(filename=basename)
+    
+    xml_node = minidom.parse(file_name)
 
-def get_gpx_track_points(xml_node):
-    #TODO make sure each file is unique
     track = xml_node.getElementsByTagName("trkpt")
     counter = 0
-    pointList = []
+
     for trackpoint in track:
         counter = counter + 1
-        time = trackpoint.getElementsByTagName("time")[0]
-        latitude = trackpoint.getAttribute('lat')
-        longitude = trackpoint.getAttribute('lon')
-        altitude = trackpoint.getElementsByTagName("ele")[0]
-        #if in_list(latitude.childNodes[0].data.strip(),longitude.childNodes[0].data.strip()) == False:
-        pointList.append((time.childNodes[0].data.strip(),latitude.strip(),longitude.strip(),altitude.childNodes[0].data.strip()))
-        print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(time.childNodes[0].data.strip(),latitude.strip(),longitude.strip(),altitude.childNodes[0].data.strip())
+        time_node       = trackpoint.getElementsByTagName("time")[0]
+        latitude_node   = trackpoint.getAttribute('lat')
+        longitude_node  = trackpoint.getAttribute('lon')
+        altitude_node   = trackpoint.getElementsByTagName("ele")[0]
+        
+        time        = time_node.childNodes[0].data.strip()
+        latitude    = latitude_node.strip()
+        longitude   = longitude_node.strip()
+        altitude    = altitude_node.childNodes[0].data.strip()
+        
+        if verbose:
+            print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(time,latitude,longitude,altitude)
+        
+        newPoint = Point(
+                fileid              = fileinfo,
+                altitude            = altitude,
+                position_lat        = float(latitude) * 2147483648 / 180,
+                position_long       = float(longitude) * 2147483648 / 180,
+                timestamp           = time,
+                )
+        newPoint.save()
+        
     print counter
-    print len(pointList)
-	
-def read_gpx(file_name):
-    xmldoc = minidom.parse(file_name)
-    get_gpx_track_points(xmldoc)
 
 
 def processFile(filename):
@@ -181,7 +220,7 @@ def processFile(filename):
     elif filename.lower().endswith('.gpx'):
         read_gpx(filename)
     elif filename.lower().endswith('.fit'):
-        getPointsFromFitFile(filename)
+        read_fit(filename)
     else:
         print "Not a valid format: ",filename
         #fitfile = r'C:\Users\matthew.rhynard\Documents\Python\2096759412.fit'

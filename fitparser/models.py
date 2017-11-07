@@ -7,7 +7,7 @@ from django.db import models
 # Create your models here.
 
 class Fileinfo(models.Model):
-    filename = models.CharField(max_length=75)
+    filename = models.CharField(max_length=75,unique=True)
     
 
 class Point(models.Model):

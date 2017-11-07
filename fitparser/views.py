@@ -18,6 +18,9 @@ def index(request):
 
 
 #TODO add the ability to get specific tracks out
+#TODO filter by date
+#TODO filter by location
+
 def helloworld(request):
     #existing_points = Point.objects.values_list('position_long','position_lat')
     existing_points = Point.objects.all()

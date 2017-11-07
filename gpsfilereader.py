@@ -100,11 +100,12 @@ def read_fit(file_name):
     fileinfo = Fileinfo.objects.get(filename=basename)
 
     fitfile = FitFile(file_name)
-#TODO add some checks to only insert points that are not in already    
+
     for record in fitfile.get_messages('record'):
         for record_data in record:
             apoint[record_data.name] = record_data.value
-        newPoint = Point(
+        if Point.objects.filter(fileid=fileinfo,timestamp=apoint['timestamp']).count() == 0:
+            newPoint = Point(
                 fileid              = fileinfo,
                 altitude            = apoint['altitude'],
                 cadence             = apoint['cadence'],
@@ -117,10 +118,10 @@ def read_fit(file_name):
                 speed               = apoint['speed'],
                 timestamp           = apoint['timestamp'],
                 )
-        newPoint.save()
-        if verbose:
-            print apoint
-            print
+            newPoint.save()
+            
+            if verbose:
+                print apoint
  
 
 def read_tcx(file_name):
@@ -140,9 +141,8 @@ def read_tcx(file_name):
     
     track = xml_node.getElementsByTagName("Trackpoint")
     counter = 0
-#TODO add some checks to only insert points that are not in already    
+
     for trackpoint in track:
-        counter = counter + 1
         time_node       = trackpoint.getElementsByTagName("Time")[0]
         position_node   = trackpoint.getElementsByTagName("Position")
         latitude_node   = position_node[0].getElementsByTagName("LatitudeDegrees")[0]
@@ -154,18 +154,21 @@ def read_tcx(file_name):
         longitude   = longitude_node.childNodes[0].data.strip()
         altitude    = altitude_node.childNodes[0].data.strip()
         
-        if verbose:
-            print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(time,latitude,longitude,altitude)
-        
-        
-        newPoint = Point(
+
+        if Point.objects.filter(fileid=fileinfo,timestamp=time).count() == 0:
+            counter = counter + 1
+            newPoint = Point(
                 fileid              = fileinfo,
                 altitude            = altitude,
                 position_lat        = float(latitude) * 2147483648 / 180,
                 position_long       = float(longitude) * 2147483648 / 180,
                 timestamp           = time,
                 )
-        newPoint.save()
+            newPoint.save()
+            if verbose:
+                print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(time,latitude,longitude,altitude)
+#        else:
+#            print "Point exists"                
     print counter
     
 def read_gpx(file_name):
@@ -187,7 +190,6 @@ def read_gpx(file_name):
     counter = 0
 
     for trackpoint in track:
-        counter = counter + 1
         time_node       = trackpoint.getElementsByTagName("time")[0]
         latitude_node   = trackpoint.getAttribute('lat')
         longitude_node  = trackpoint.getAttribute('lon')
@@ -198,17 +200,21 @@ def read_gpx(file_name):
         longitude   = longitude_node.strip()
         altitude    = altitude_node.childNodes[0].data.strip()
         
-        if verbose:
-            print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(time,latitude,longitude,altitude)
-        
-        newPoint = Point(
+        if Point.objects.filter(fileid=fileinfo,timestamp=time).count() == 0:
+            
+            counter = counter + 1
+            newPoint = Point(
                 fileid              = fileinfo,
                 altitude            = altitude,
                 position_lat        = float(latitude) * 2147483648 / 180,
                 position_long       = float(longitude) * 2147483648 / 180,
                 timestamp           = time,
                 )
-        newPoint.save()
+            newPoint.save()
+            if verbose:
+                print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(time,latitude,longitude,altitude)   
+#        else:
+#            print "Point exists"
         
     print counter
 

@@ -13,6 +13,8 @@ var viewer = new Cesium.Viewer('cesiumContainer',{
 });
 
 
+
+
 //TODO separate the points by tracks(files)
 function getPointsList(){
     var t = js_data;
@@ -35,13 +37,16 @@ function getPointsList(){
     return pointslist;
     
 }
-function getPointCollection(){
+function addPointCollection(){
 	
     var t = js_data;
     var tmp=JSON.parse(js_data);
-
+	
+	var scene = viewer.scene;
+	var primitives = scene.primitives;
+	
     let points = new Cesium.PointPrimitiveCollection();
-
+	primitives.add(points);
     for(x in tmp){
     
         var z=tmp[x];
@@ -53,7 +58,7 @@ function getPointCollection(){
 			color : Cesium.Color.YELLOW
 		});
     }
-    return points;
+    //return points;
     
 }
 
@@ -195,7 +200,7 @@ Sandcastle.addToolbarMenu([{
 
 
 //TODO add multiple tracks onto the cesium viewer    
-var glowingLine = viewer.entities.add({
+/*var glowingLine = viewer.entities.add({
     name : 'Glowing orange line on the surface',
     polyline : {
     //positions : Cesium.Cartesian3.fromDegreesArray([-75, 37,-95, 36,-125, 37]),
@@ -206,8 +211,8 @@ var glowingLine = viewer.entities.add({
                                                         color : Cesium.Color.ORANGE
             })
         }
-    });
+    });*/
 
-//var pointsCollection = viewer.entities.add(getPointCollection());
+addPointCollection();
 
 viewer.zoomTo(viewer.entities);

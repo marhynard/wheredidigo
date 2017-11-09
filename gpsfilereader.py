@@ -21,7 +21,7 @@ from fitparse import FitFile
 
 from fitparser.models import Fileinfo,Point
 
-
+#TODO figure out a way to distinguish if the activity is a ride or run
 
 
 apoint = {'altitude'            : 0.0,
@@ -303,6 +303,7 @@ if __name__ == "__main__":
     arg_parser.add_argument('--filetype',type=str,help='filetypes to process: .tcx,.gpx,.fit')
     arg_parser.add_argument('--file'    ,type=str,help='Process the specified file')
     arg_parser.add_argument('-v','--verbose' ,action="store_true",help='increase output verbosity')
+    arg_parser.add_argument('-activity',action="store_true",help='used to try and determine type of activity')
     
     args = arg_parser.parse_args()
     

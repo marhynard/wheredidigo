@@ -11,7 +11,7 @@ var viewer = new Cesium.Viewer('cesiumContainer',{
     animation : false,
     timeline : false
 });
-
+var points = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection());
 
 
 
@@ -42,11 +42,7 @@ function addPointCollection(){
     var t = js_data;
     var tmp=JSON.parse(js_data);
 	
-	var scene = viewer.scene;
-	var primitives = scene.primitives;
 	
-    let points = new Cesium.PointPrimitiveCollection();
-	primitives.add(points);
     for(x in tmp){
     
         var z=tmp[x];
@@ -54,7 +50,7 @@ function addPointCollection(){
         var lon= z.fields.position_long; //  * ( 180 / power );
 		var alt = z.fields.altitude;
 		points.add({
-			position : new Cesium.Cartesian3(lon,lat,alt),
+			position : new Cesium.Cartesian3.fromDegrees(lon,lat),
 			color : Cesium.Color.YELLOW
 		});
     }

@@ -20,6 +20,9 @@ def index(request):
 def getFileList(request):
     existing_files = Fileinfo.objects.filter()
     
+#TODO get the modified list (not quite sure what this means yet)
+def getModifiedPointList(request):
+    existing_files = Fileinfo.objects.filter()
 
 #TODO need to fix this up and make it so the request is a valid request also need to add it to the urls and create the html and javascript to handle it
 def getPointList(request):

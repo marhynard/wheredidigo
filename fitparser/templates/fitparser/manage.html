@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+	
+    <head>
+        <title>File Manager</title>
+    </head>
+<!--TODO add options for sorting on column names-->
+    <body>
+        <h1>This Page is supposed to help in managing the files</h1>
+		<style>
+			table,th,td{
+				border:1x solid black;
+			}
+		</style>
+        {% if existing_files %}
+
+			<table style="width:100%">
+				<tr>
+					<th>filename</th>
+					<th>activity type</th>
+					<th>Start Time(UTC)</th>
+					<th>End Time(UTC)</th>
+					<th>number of points</th>
+					
+
+				</tr>
+            
+                {% for file in existing_files %}
+					<tr>
+						<td>{{ file.filename }}</td>
+
+					</tr>
+                {% endfor %}
+            
+			</table>
+        {% else %}
+            <strong>There are no files present.</strong>
+        {% endif %}
+
+        <!--<a href="/rango/about/">About</a>-->
+    </body>
+</html>

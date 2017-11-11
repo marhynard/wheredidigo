@@ -18,7 +18,9 @@ def index(request):
 
 #TODO need to fix and make it a valid request
 def getFileList(request):
-    existing_files = Fileinfo.objects.filter()
+    existing_files = Fileinfo.objects.all()
+    context = {'existing_files':existing_files}
+    return render(request,'fitparser/manage.html',context)
     
 #TODO get the modified list (not quite sure what this means yet)
 def getModifiedPointList(request):

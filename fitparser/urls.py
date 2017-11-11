@@ -13,5 +13,6 @@ urlpatterns = [
         url(r'^$', views.index, name='index'),
         #url(r'^helloworld$', views.HelloWorldPageView.as_view(), name='helloworld'),
         url(r'^helloworld$', views.helloworld, name='helloworld'),
+        url(r'^manage$', views.getFileList, name='manage'),
 
 ]

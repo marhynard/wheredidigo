@@ -10,6 +10,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE','wheredidigo.settings')
 
 import sys, math, re, argparse, os, glob
 from xml.dom import minidom
+import pytz
+import datetime
 #import simplekml
 #import time
 
@@ -104,7 +106,12 @@ def read_fit(file_name):
     for record in fitfile.get_messages('record'):
         for record_data in record:
             apoint[record_data.name] = record_data.value
-        if Point.objects.filter(fileid=fileinfo,timestamp=apoint['timestamp']).count() == 0:
+            if apoint[record_data.name] == None:
+                apoint[record_data.name] = 0.0
+        #newdate = datetime.datetime.strptime(apoint['timestamp'], '%Y-%m-%d %H:%M:%S')
+        aware = apoint['timestamp'].replace(tzinfo=pytz.UTC)
+        if Point.objects.filter(fileid=fileinfo,timestamp=aware).count() == 0:
+                   
             newPoint = Point(
                 fileid              = fileinfo,
                 altitude            = apoint['altitude'],
@@ -116,7 +123,7 @@ def read_fit(file_name):
                 position_lat        = apoint['position_lat'],
                 position_long       = apoint['position_long'],
                 speed               = apoint['speed'],
-                timestamp           = apoint['timestamp'],
+                timestamp           = aware,
                 )
             newPoint.save()
             

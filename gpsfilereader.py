@@ -8,15 +8,18 @@ Created on Fri Oct 13 14:17:39 2017
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE','wheredidigo.settings')
 
-import sys, math, re, argparse, os, glob
+import math, argparse, os, glob
 from xml.dom import minidom
 import pytz
 import datetime
+
 #import simplekml
-#import time
+import time
 
 
 import django
+from django.db import transaction
+
 django.setup()
 
 from fitparse import FitFile
@@ -39,6 +42,11 @@ apoint = {'altitude'            : 0.0,
         }
 
 verbose = False
+
+debug = True
+
+MPSTOMPH = 2.23694
+
 
 #http://www.johndcook.com/python_longitude_latitude.html
 def distance_on_unit_sphere(lat1, long1, lat2, long2):
@@ -71,7 +79,7 @@ def distance_on_unit_sphere(lat1, long1, lat2, long2):
     # in your favorite set of units to get length.
     return arc* 3959 * 5280#6373km 3959mi 
  
-def distance(x1, y1,x2,y2):
+def findDistance(x1, y1,x2,y2):
     c1x = float(x1)
     c1y = float(y1)
     c2x = float(x2)
@@ -85,54 +93,87 @@ def distance(x1, y1,x2,y2):
 #	return False
 
 
+#This will give a basic guess as to the activity type.  It is not a guarentee.
+#Still need to check and update
+#0=unknown, 1=ride, 2=run, 3=swim, 4=other
+def getActivityType(speed):
+    if speed > 10 and speed < 30:
+        return 1
+    elif speed > 5 and speed <= 10:
+        return 2
+    else:
+        return 0
+    
 
 
 
 
 def read_fit(file_name):
-
+    if debug:
+        t0 = time.clock()
+    
     basename = os.path.basename(file_name)
     if Fileinfo.objects.filter(filename=basename).count() == 1:
-        print "File exists: "
+        print "File exists: ",basename
     else:
-        print "File doesn't exist: "
+        print "File doesn't exist: ",basename
         f = Fileinfo(filename=basename)
         f.save()
         
     fileinfo = Fileinfo.objects.get(filename=basename)
 
     fitfile = FitFile(file_name)
+    average_speed = 0.0
+    total_speed = 0.0
+    number_records = 0
+    with transaction.atomic():
+        for record in fitfile.get_messages('record'):
+            for record_data in record:
+                apoint[record_data.name] = record_data.value
+                if apoint[record_data.name] == None:
+                    apoint[record_data.name] = 0.0
+    
+            timeZoneAware = apoint['timestamp'].replace(tzinfo=pytz.UTC)
+            if Point.objects.filter(fileid=fileinfo,timestamp=timeZoneAware).count() == 0:
+                       
+                newPoint = Point(
+                    fileid              = fileinfo,
+                    altitude            = apoint['altitude'],
+                    cadence             = apoint['cadence'],
+                    distance            = apoint['distance'],
+                    enhanced_altitude   = apoint['enhanced_altitude'],
+                    enhanced_speed      = apoint['enhanced_speed'],
+                    fractional_cadence  = apoint['fractional_cadence'],
+                    position_lat        = apoint['position_lat'],
+                    position_long       = apoint['position_long'],
+                    speed               = apoint['speed'],
+                    timestamp           = timeZoneAware,
+                    )
+                newPoint.save()
+                total_speed += apoint['speed']
+                number_records += 1
+                average_speed = (total_speed/number_records) * MPSTOMPH
+                if verbose:
+                    print apoint
+                    print average_speed
+    
+    activity_type = getActivityType(average_speed)    
+    fileinfo.activitytype=activity_type
+    fileinfo.activityspeed=average_speed
+    fileinfo.save()
+    
+    if verbose:
+        print activity_type
+    if debug:
+        t1 = time.clock()
+        total = t1-t0
+        print "Time for insert: ",total
 
-    for record in fitfile.get_messages('record'):
-        for record_data in record:
-            apoint[record_data.name] = record_data.value
-            if apoint[record_data.name] == None:
-                apoint[record_data.name] = 0.0
-        #newdate = datetime.datetime.strptime(apoint['timestamp'], '%Y-%m-%d %H:%M:%S')
-        aware = apoint['timestamp'].replace(tzinfo=pytz.UTC)
-        if Point.objects.filter(fileid=fileinfo,timestamp=aware).count() == 0:
-                   
-            newPoint = Point(
-                fileid              = fileinfo,
-                altitude            = apoint['altitude'],
-                cadence             = apoint['cadence'],
-                distance            = apoint['distance'],
-                enhanced_altitude   = apoint['enhanced_altitude'],
-                enhanced_speed      = apoint['enhanced_speed'],
-                fractional_cadence  = apoint['fractional_cadence'],
-                position_lat        = apoint['position_lat'],
-                position_long       = apoint['position_long'],
-                speed               = apoint['speed'],
-                timestamp           = aware,
-                )
-            newPoint.save()
-            
-            if verbose:
-                print apoint
- 
+
 
 def read_tcx(file_name):
-
+    if debug:
+        t0 = time.clock()
     basename = os.path.basename(file_name)
     
     if Fileinfo.objects.filter(filename=basename).count() == 1:
@@ -148,44 +189,49 @@ def read_tcx(file_name):
     
     track = xml_node.getElementsByTagName("Trackpoint")
     counter = 0
-
-    for trackpoint in track:
-        time_node       = trackpoint.getElementsByTagName("Time")[0]
-        position_node   = trackpoint.getElementsByTagName("Position")
-        latitude_node   = position_node[0].getElementsByTagName("LatitudeDegrees")[0]
-        longitude_node  = position_node[0].getElementsByTagName("LongitudeDegrees")[0]
-        altitude_node   = trackpoint.getElementsByTagName("AltitudeMeters")[0]
-        
-        time        = time_node.childNodes[0].data.strip()
-        latitude    = latitude_node.childNodes[0].data.strip()
-        longitude   = longitude_node.childNodes[0].data.strip()
-        altitude    = altitude_node.childNodes[0].data.strip()
-        
-
-        if Point.objects.filter(fileid=fileinfo,timestamp=time).count() == 0:
-            counter = counter + 1
-            newPoint = Point(
-                fileid              = fileinfo,
-                altitude            = altitude,
-                position_lat        = float(latitude) * 2147483648 / 180,
-                position_long       = float(longitude) * 2147483648 / 180,
-                timestamp           = time,
-                )
-            newPoint.save()
-            if verbose:
-                print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(time,latitude,longitude,altitude)
-#        else:
-#            print "Point exists"                
+    with transaction.atomic():
+        for trackpoint in track:
+            time_node       = trackpoint.getElementsByTagName("Time")[0]
+            position_node   = trackpoint.getElementsByTagName("Position")
+            latitude_node   = position_node[0].getElementsByTagName("LatitudeDegrees")[0]
+            longitude_node  = position_node[0].getElementsByTagName("LongitudeDegrees")[0]
+            altitude_node   = trackpoint.getElementsByTagName("AltitudeMeters")[0]
+            
+            pointTime        = time_node.childNodes[0].data.strip()
+            latitude    = latitude_node.childNodes[0].data.strip()
+            longitude   = longitude_node.childNodes[0].data.strip()
+            altitude    = altitude_node.childNodes[0].data.strip()
+            
+    
+            if Point.objects.filter(fileid=fileinfo,timestamp=pointTime).count() == 0:
+                counter = counter + 1
+                newPoint = Point(
+                    fileid              = fileinfo,
+                    altitude            = altitude,
+                    position_lat        = float(latitude) * 2147483648 / 180,
+                    position_long       = float(longitude) * 2147483648 / 180,
+                    timestamp           = pointTime,
+                    )
+                newPoint.save()
+                if verbose:
+                    print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(pointTime,latitude,longitude,altitude)
+    #        else:
+    #            print "Point exists"                
     print counter
+    if debug:
+        t1 = time.clock()
+        total = t1-t0
+        print "Time for insert: ",total
     
 def read_gpx(file_name):
-    
+    if debug:
+        t0 = time.clock()    
     basename = os.path.basename(file_name)
     
     if Fileinfo.objects.filter(filename=basename).count() == 1:
-        print "File exists: "
+        print "File exists: ",basename
     else:
-        print "File doesn't exist: "
+        print "File doesn't exist: ",basename
         f = Fileinfo(filename=basename)
         f.save()
     
@@ -195,36 +241,72 @@ def read_gpx(file_name):
 
     track = xml_node.getElementsByTagName("trkpt")
     counter = 0
-
-    for trackpoint in track:
-        time_node       = trackpoint.getElementsByTagName("time")[0]
-        latitude_node   = trackpoint.getAttribute('lat')
-        longitude_node  = trackpoint.getAttribute('lon')
-        altitude_node   = trackpoint.getElementsByTagName("ele")[0]
-        
-        time        = time_node.childNodes[0].data.strip()
-        latitude    = latitude_node.strip()
-        longitude   = longitude_node.strip()
-        altitude    = altitude_node.childNodes[0].data.strip()
-        
-        if Point.objects.filter(fileid=fileinfo,timestamp=time).count() == 0:
+    lat1 = 0.0
+    lon1 = 0.0
+    lat2 = 0.0
+    lon2 = 0.0
+    t1 = 0
+    t2 = 0
+    distance = 0.0
+    eltime = 0.0
+    speed = 0.0
+                    
+    with transaction.atomic():
+        for trackpoint in track:
+            time_node       = trackpoint.getElementsByTagName("time")[0]
+            latitude_node   = trackpoint.getAttribute('lat')
+            longitude_node  = trackpoint.getAttribute('lon')
+            altitude_node   = trackpoint.getElementsByTagName("ele")[0]
             
-            counter = counter + 1
-            newPoint = Point(
-                fileid              = fileinfo,
-                altitude            = altitude,
-                position_lat        = float(latitude) * 2147483648 / 180,
-                position_long       = float(longitude) * 2147483648 / 180,
-                timestamp           = time,
-                )
-            newPoint.save()
-            if verbose:
-                print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(time,latitude,longitude,altitude)   
-#        else:
-#            print "Point exists"
+            pointTime        = time_node.childNodes[0].data.strip()
+            latitude    = latitude_node.strip()
+            longitude   = longitude_node.strip()
+            altitude    = altitude_node.childNodes[0].data.strip()
+            
+            if Point.objects.filter(fileid=fileinfo,timestamp=pointTime).count() == 0:
+                
+                
+                newPoint = Point(
+                    fileid              = fileinfo,
+                    altitude            = altitude,
+                    position_lat        = float(latitude) * 2147483648 / 180,
+                    position_long       = float(longitude) * 2147483648 / 180,
+                    timestamp           = pointTime,
+                    )
+                newPoint.save()
+                if counter == 0:
+                    lat2 = float(latitude)
+                    lon2 = float(longitude)
+                    t2 = time.mktime(datetime.datetime.strptime(pointTime,"%Y-%m-%dT%H:%M:%SZ").timetuple())
+                if counter > 1:
+                    lat1 = lat2
+                    lon1 = lon2
+                    t1 = t2
+                    lat2 = float(latitude)
+                    lon2 = float(longitude)
+                    t2 = time.mktime(datetime.datetime.strptime(pointTime,"%Y-%m-%dT%H:%M:%SZ").timetuple())
+                    distance = findDistance(lat1, lon1,lat2,lon2)
+                    eltime = t2 - t1
+                    speed = distance/eltime
+#                    total_speed += apoint['speed']
+#                    number_records += 1
+#                    average_speed = (total_speed/number_records) * MPSTOMPH
+                
+                    
+                counter = counter + 1
+                if verbose:
+                    print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(pointTime,latitude,longitude,altitude)   
+                    print distance
+                    print eltime
+                    print speed
+    #        else:
+    #            print "Point exists"
         
     print counter
-
+    if debug:
+        t1 = time.clock()
+        total = t1-t0
+        print "Time for insert: ",total
 
 def processFile(filename):
     print "Procssing file: ",filename

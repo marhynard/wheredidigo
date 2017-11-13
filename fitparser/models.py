@@ -8,7 +8,8 @@ from django.db import models
 
 class Fileinfo(models.Model):
     filename = models.CharField(max_length=75,unique=True)
-    #activitytype = models.IntegerField(default=0) #0=unknown, 1=ride, 2=run, 3=swim, 4=other
+    activitytype = models.IntegerField(default=0) #0=unknown, 1=ride, 2=run, 3=swim, 4=other
+    activityspeed = models.FloatField(default=0.0) #m/s
     
 
 class Point(models.Model):

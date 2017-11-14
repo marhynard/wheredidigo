@@ -13,7 +13,7 @@ from xml.dom import minidom
 import pytz
 import datetime
 
-from math import radians, cos, sin, asin, acos, sqrt, pi
+from utils import findDistance
 
 import time
 
@@ -26,8 +26,6 @@ django.setup()
 from fitparse import FitFile
 
 from fitparser.models import Fileinfo,Point
-
-#TODO figure out a way to distinguish if the activity is a ride or run
 
 
 apoint = {'altitude'            : 0.0,
@@ -49,62 +47,7 @@ debug = True
 MPSTOMPH = 2.23694
 
 
-#http://www.johndcook.com/python_longitude_latitude.html
-def distance_on_unit_sphere(lat1, long1, lat2, long2):
- 
-    # Convert latitude and longitude to 
-    # spherical coordinates in radians.
-    degrees_to_radians = pi/180.0
- 
-    # phi = 90 - latitude
-    phi1 = (90.0 - lat1)*degrees_to_radians
-    phi2 = (90.0 - lat2)*degrees_to_radians
- 
-    # theta = longitude
-    theta1 = long1*degrees_to_radians
-    theta2 = long2*degrees_to_radians
- 
-    # Compute spherical distance from spherical coordinates.
- 
-    # For two locations in spherical coordinates 
-    # (1, theta, phi) and (1, theta, phi)
-    # cosine( arc length ) = 
-    #    sin phi sin phi' cos(theta-theta') + cos phi cos phi'
-    # distance = rho * arc length
- 
-    cos_v = (sin(phi1)*sin(phi2)*cos(theta1 - theta2) + 
-           cos(phi1)*cos(phi2))
-    arc = acos( cos_v )
- 
-    # Remember to multiply arc by the radius of the earth 
-    # in your favorite set of units to get length.
-    return arc * 6373#6373km 3959mi 
 
-#Michael Dunn StackOverflow 
-#    Haversine Formula in Python (Bearing and Distance between two GPS points)
-def haversine(lat1, lon1, lat2, lon2):
-    """
-    Calculate the great circle distance between two points 
-    on the earth (specified in decimal degrees)
-    """
-    # convert decimal degrees to radians 
-    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
-
-    # haversine formula 
-    dlon = lon2 - lon1 
-    dlat = lat2 - lat1 
-    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
-    c = 2 * asin(sqrt(a)) 
-    r = 6371000 # Radius of earth in meters. Use 3956 for miles
-    return c * r
-
- 
-def findDistance(x1, y1,x2,y2):
-    c1x = float(x1)
-    c1y = float(y1)
-    c2x = float(x2)
-    c2y = float(y2)
-    return haversine(c1x, c1y, c2x, c2y)
 	
 #def in_list(lat, lon):
 #	for point in pointList:
@@ -113,7 +56,7 @@ def findDistance(x1, y1,x2,y2):
 #	return False
 
 
-#This will give a basic guess as to the activity type.  It is not a guarentee.
+#This will give an initial guess as to the activity type.  It is not a guarentee.
 #Still need to check and update
 #0=unknown, 1=ride, 2=run, 3=swim, 4=other
 def getActivityType(speed):
@@ -464,7 +407,7 @@ if __name__ == "__main__":
     arg_parser.add_argument('--filetype',type=str,help='filetypes to process: .tcx,.gpx,.fit')
     arg_parser.add_argument('--file'    ,type=str,help='Process the specified file')
     arg_parser.add_argument('-v','--verbose' ,action="store_true",help='increase output verbosity')
-    arg_parser.add_argument('--activity',action="store_true",help='used to try and determine type of activity')
+    #arg_parser.add_argument('--activity',action="store_true",help='used to try and determine type of activity')
     
     
     args = arg_parser.parse_args()

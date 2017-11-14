@@ -46,7 +46,7 @@ debug = True
 
 MPSTOMPH = 2.23694
 
-
+#TODO need to fix it so It doesn't accidentaly change the activity type.
 
 	
 #def in_list(lat, lon):

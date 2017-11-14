@@ -8,12 +8,13 @@ Created on Fri Oct 13 14:17:39 2017
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE','wheredidigo.settings')
 
-import math, argparse, os, glob
+import argparse, os, glob
 from xml.dom import minidom
 import pytz
 import datetime
 
-#import simplekml
+from math import radians, cos, sin, asin, acos, sqrt, pi
+
 import time
 
 
@@ -53,7 +54,7 @@ def distance_on_unit_sphere(lat1, long1, lat2, long2):
  
     # Convert latitude and longitude to 
     # spherical coordinates in radians.
-    degrees_to_radians = math.pi/180.0
+    degrees_to_radians = pi/180.0
  
     # phi = 90 - latitude
     phi1 = (90.0 - lat1)*degrees_to_radians
@@ -71,20 +72,39 @@ def distance_on_unit_sphere(lat1, long1, lat2, long2):
     #    sin phi sin phi' cos(theta-theta') + cos phi cos phi'
     # distance = rho * arc length
  
-    cos = (math.sin(phi1)*math.sin(phi2)*math.cos(theta1 - theta2) + 
-           math.cos(phi1)*math.cos(phi2))
-    arc = math.acos( cos )
+    cos_v = (sin(phi1)*sin(phi2)*cos(theta1 - theta2) + 
+           cos(phi1)*cos(phi2))
+    arc = acos( cos_v )
  
     # Remember to multiply arc by the radius of the earth 
     # in your favorite set of units to get length.
-    return arc* 3959 * 5280#6373km 3959mi 
+    return arc * 6373#6373km 3959mi 
+
+#Michael Dunn StackOverflow 
+#    Haversine Formula in Python (Bearing and Distance between two GPS points)
+def haversine(lat1, lon1, lat2, lon2):
+    """
+    Calculate the great circle distance between two points 
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians 
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+    # haversine formula 
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a)) 
+    r = 6371000 # Radius of earth in meters. Use 3956 for miles
+    return c * r
+
  
 def findDistance(x1, y1,x2,y2):
     c1x = float(x1)
     c1y = float(y1)
     c2x = float(x2)
     c2y = float(y2)
-    return distance_on_unit_sphere(c1x, c1y, c2x, c2y)
+    return haversine(c1x, c1y, c2x, c2y)
 	
 #def in_list(lat, lon):
 #	for point in pointList:
@@ -110,7 +130,7 @@ def getActivityType(speed):
 
 def read_fit(file_name):
     if debug:
-        t0 = time.clock()
+        ti0 = time.clock()
     
     basename = os.path.basename(file_name)
     if Fileinfo.objects.filter(filename=basename).count() == 1:
@@ -165,15 +185,15 @@ def read_fit(file_name):
     if verbose:
         print activity_type
     if debug:
-        t1 = time.clock()
-        total = t1-t0
+        ti1 = time.clock()
+        total = ti1-ti0
         print "Time for insert: ",total
 
 
 
 def read_tcx(file_name):
     if debug:
-        t0 = time.clock()
+        ti0 = time.clock()
     basename = os.path.basename(file_name)
     
     if Fileinfo.objects.filter(filename=basename).count() == 1:
@@ -189,6 +209,20 @@ def read_tcx(file_name):
     
     track = xml_node.getElementsByTagName("Trackpoint")
     counter = 0
+    lat1 = 0.0
+    lon1 = 0.0
+    lat2 = 0.0
+    lon2 = 0.0
+    t1 = 0
+    t2 = 0
+    distance = 0.0
+    eltime = 0.0
+    speed = 0.0
+    total_speed = 0.0
+    average_speed = 0.0
+    number_records = 0.0
+    
+    
     with transaction.atomic():
         for trackpoint in track:
             time_node       = trackpoint.getElementsByTagName("Time")[0]
@@ -197,14 +231,19 @@ def read_tcx(file_name):
             longitude_node  = position_node[0].getElementsByTagName("LongitudeDegrees")[0]
             altitude_node   = trackpoint.getElementsByTagName("AltitudeMeters")[0]
             
-            pointTime        = time_node.childNodes[0].data.strip()
+            date_with_tz    = time_node.childNodes[0].data.strip()
             latitude    = latitude_node.childNodes[0].data.strip()
             longitude   = longitude_node.childNodes[0].data.strip()
             altitude    = altitude_node.childNodes[0].data.strip()
             
+            date_str = date_with_tz[:-6]
+            dt_utc = datetime.datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%f")
+            pointTime = dt_utc.replace(tzinfo=pytz.UTC)
+            
+            #timeZoneAware = apoint['timestamp'].replace(tzinfo=pytz.UTC)
+
     
             if Point.objects.filter(fileid=fileinfo,timestamp=pointTime).count() == 0:
-                counter = counter + 1
                 newPoint = Point(
                     fileid              = fileinfo,
                     altitude            = altitude,
@@ -213,19 +252,46 @@ def read_tcx(file_name):
                     timestamp           = pointTime,
                     )
                 newPoint.save()
+                if counter == 0:
+                    lat2 = float(latitude)
+                    lon2 = float(longitude)
+                    t2 = pointTime
+                if counter > 1:
+                    lat1 = lat2
+                    lon1 = lon2
+                    t1 = t2
+                    lat2 = float(latitude)
+                    lon2 = float(longitude)
+                    t2 = pointTime
+                    distance = findDistance(lat1, lon1,lat2,lon2)
+                    eltime = t2 - t1
+                    speed = distance/eltime.total_seconds()
+                    total_speed += speed
+                    number_records += 1
+                    average_speed = (total_speed/number_records) * MPSTOMPH
+                
+                    
+                counter = counter + 1
+                
                 if verbose:
                     print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(pointTime,latitude,longitude,altitude)
+                    print distance
+                    print average_speed
     #        else:
     #            print "Point exists"                
+    activity_type = getActivityType(average_speed)    
+    fileinfo.activitytype=activity_type
+    fileinfo.activityspeed=average_speed
+    fileinfo.save()        
     print counter
     if debug:
-        t1 = time.clock()
-        total = t1-t0
+        ti1 = time.clock()
+        total = ti1-ti0
         print "Time for insert: ",total
     
 def read_gpx(file_name):
     if debug:
-        t0 = time.clock()    
+        ti0 = time.clock()    
     basename = os.path.basename(file_name)
     
     if Fileinfo.objects.filter(filename=basename).count() == 1:
@@ -250,7 +316,10 @@ def read_gpx(file_name):
     distance = 0.0
     eltime = 0.0
     speed = 0.0
-                    
+    total_speed = 0.0
+    average_speed = 0.0
+    number_records = 0.0
+          
     with transaction.atomic():
         for trackpoint in track:
             time_node       = trackpoint.getElementsByTagName("time")[0]
@@ -288,24 +357,27 @@ def read_gpx(file_name):
                     distance = findDistance(lat1, lon1,lat2,lon2)
                     eltime = t2 - t1
                     speed = distance/eltime
-#                    total_speed += apoint['speed']
-#                    number_records += 1
-#                    average_speed = (total_speed/number_records) * MPSTOMPH
+                    total_speed += speed
+                    number_records += 1
+                    average_speed = (total_speed/number_records) * MPSTOMPH
                 
                     
                 counter = counter + 1
                 if verbose:
                     print 'Time,lat,lon,alt: {0}, {1}, {2}, {3}'.format(pointTime,latitude,longitude,altitude)   
                     print distance
-                    print eltime
-                    print speed
+                    print average_speed
     #        else:
     #            print "Point exists"
-        
+    
+    activity_type = getActivityType(average_speed)    
+    fileinfo.activitytype=activity_type
+    fileinfo.activityspeed=average_speed
+    fileinfo.save()        
     print counter
     if debug:
-        t1 = time.clock()
-        total = t1-t0
+        ti1 = time.clock()
+        total = ti1-ti0
         print "Time for insert: ",total
 
 def processFile(filename):

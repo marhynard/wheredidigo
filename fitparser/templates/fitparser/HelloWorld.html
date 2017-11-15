@@ -1,5 +1,9 @@
 {% load static %}
 
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,13 +14,29 @@
   <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
   <title>Hello World!</title>
+  
   <!--<script src="../Build/Cesium/Cesium.js"></script>-->
   <script src="{% static 'Cesium-1.38/Build/Cesium/Cesium.js' %}"></script>
   <style>
-      @import url({% static 'Cesium-1.38/Build/Cesium/Widgets/widgets.css' %});
-      html, body, #cesiumContainer {
-          width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
-      }
+	@import url({% static 'Cesium-1.38/Build/Cesium/Widgets/widgets.css' %});
+	html, body, #cesiumContainer {
+	  width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+	}
+	#controlPanel {
+		position: absolute;
+		top: 5px;
+		left: 5px;
+		background: rgba(42, 42, 42, 0.8);
+		padding: 5px 8px;
+		border-radius: 5px;
+	}
+	label {
+	  cursor: pointer;
+	}
+	label:hover span {
+	  text-decoration: underline;
+	}
+
   </style>
 </head>
 <body>
@@ -25,5 +45,17 @@
       var js_data = '{{js_data|safe}}';  
   </script>
   <script src="{% static 'js/mainCesium.js' %}"></script>
+  <div id="controlPanel">
+  This is a floating control panel<br/>
+  with a translucent background color.
+  <p>
+    <label>
+      <input id="skyCheckbox" type="checkbox" checked />
+      <span>Enable atmospheric effect</span>
+    </label><br/>
+    <button class="cesium-button">Button 1</button>
+    <button class="cesium-button">Button 2</button>
+  </p>
+</div>
 </body>
 </html>

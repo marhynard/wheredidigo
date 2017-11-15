@@ -11,9 +11,15 @@ var viewer = new Cesium.Viewer('cesiumContainer',{
     animation : false,
     timeline : false
 });
+
+var skyAtmosphere = viewer.scene.skyAtmosphere;
+var skyCheckbox = document.getElementById('skyCheckbox');
+
+skyCheckbox.addEventListener('change', function() {
+  viewer.scene.skyAtmosphere = skyCheckbox.checked ? skyAtmosphere : undefined;
+}, false);
+
 var points = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection());
-
-
 
 //TODO separate the points by tracks(files)
 function getPointsList(){

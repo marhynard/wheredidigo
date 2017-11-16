@@ -13,10 +13,10 @@ var viewer = new Cesium.Viewer('cesiumContainer',{
 });
 
 var skyAtmosphere = viewer.scene.skyAtmosphere;
-var skyCheckbox = document.getElementById('skyCheckbox');
+var rideCheckbox = document.getElementById('rideCheckbox');
 
-skyCheckbox.addEventListener('change', function() {
-  viewer.scene.skyAtmosphere = skyCheckbox.checked ? skyAtmosphere : undefined;
+rideCheckbox.addEventListener('change', function() {
+  viewer.scene.skyAtmosphere = rideCheckbox.checked ? skyAtmosphere : undefined;
 }, false);
 
 var points = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection());

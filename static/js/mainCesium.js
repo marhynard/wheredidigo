@@ -1,10 +1,13 @@
 
-//TODO add a timeline for the viewer
+//TODO add option to toggle the timeline for the viewer
 //TODO add the points with time
 
 //TODO create a heatmap based on time selected
 
 //TODO add the ability to toggle tracks
+
+//TODO add the ability to drag files for upload
+
 
 
 var viewer = new Cesium.Viewer('cesiumContainer',{
@@ -13,13 +16,30 @@ var viewer = new Cesium.Viewer('cesiumContainer',{
 });
 
 var skyAtmosphere = viewer.scene.skyAtmosphere;
+var runPoints = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection());
+var ridePoints = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection());
+var otherPoints = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection());
+
+
+
 var rideCheckbox = document.getElementById('rideCheckbox');
+var runCheckbox = document.getElementById('runCheckbox');
+var otherCheckbox = document.getElementById('otherCheckbox');
 
 rideCheckbox.addEventListener('change', function() {
   viewer.scene.skyAtmosphere = rideCheckbox.checked ? skyAtmosphere : undefined;
 }, false);
+runCheckbox.addEventListener('change', function() {
+  viewer.scene.skyAtmosphere = runCheckbox.checked ? skyAtmosphere : undefined;
+}, false);
+otherCheckbox.addEventListener('change', function() {
+  viewer.scene.primitives.otherPoints = otherCheckbox.checked ? otherPoints : undefined;
+  //TODO not sure the exact order or syntax of this but want to be able to toggle the points on and off.  Not sure if I want to load everything right away.
+  
+  
+}, false);
 
-var points = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection());
+
 
 //TODO separate the points by tracks(files)
 function getPointsList(){
@@ -43,7 +63,7 @@ function getPointsList(){
     return pointslist;
     
 }
-function addPointCollection(){
+function addPointCollection(pointType){
 	
     var t = js_data;
     var tmp=JSON.parse(js_data);
@@ -55,14 +75,51 @@ function addPointCollection(){
         var lat= z.fields.position_lat; //  * ( 180 / power );
         var lon= z.fields.position_long; //  * ( 180 / power );
 		var alt = z.fields.altitude;
-		points.add({
-			position : new Cesium.Cartesian3.fromDegrees(lon,lat),
-			color : Cesium.Color.YELLOW
-		});
+		if(pointType == 0){
+			otherPoints.add({
+				position : new Cesium.Cartesian3.fromDegrees(lon,lat),
+				color : Cesium.Color.YELLOW
+			});
+		}
     }
     //return points;
     
 }
+//https://stackoverflow.com/questions/247483/http-get-request-in-javascript
+function httpGetAsync(theUrl, callback)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+    }
+    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+    xmlHttp.send(null);
+}
+
+//    var CustomerNumber = document.getElementById( "TextBoxCustomerNumber" ).value;
+//    var Url = "GetCustomerInfoAsJson.aspx?number=" + CustomerNumber;
+/*
+var HttpClient = function() {
+    this.get = function(aUrl, aCallback) {
+        var anHttpRequest = new XMLHttpRequest();
+        anHttpRequest.onreadystatechange = function() { 
+            if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+                aCallback(anHttpRequest.responseText);
+        }
+
+        anHttpRequest.open( "GET", aUrl, true );            
+        anHttpRequest.send( null );
+    }
+}
+
+var client = new HttpClient();
+client.get('http://some/thing?with=arguments', function(response) {
+    // do something with response
+});*/
+
+
+
 
 /*
 function addPoint() {
@@ -214,7 +271,7 @@ Sandcastle.addToolbarMenu([{
             })
         }
     });*/
-
-addPointCollection();
+addPointCollection(0);
+//addPointCollection();
 
 viewer.zoomTo(viewer.entities);

@@ -5,7 +5,7 @@ from django.shortcuts import render
 #from django.views.generic import TemplateView # Import TemplateView
 from django.http import HttpResponse
 from django.core import serializers
-#import json
+import json
 from .models import Point,Fileinfo
 
 
@@ -46,7 +46,8 @@ def getPointList(request):
 
 def helloworld(request):
     #existing_points = Point.objects.values_list('position_long','position_lat')
-    existing_points = Point.objects.all()
+    #existing_points = Point.objects.all()
+    existing_points = Point.objects.select_related('fileid')
     #semicircles * ( 180 / 2^31 )
     
     for point in existing_points:
@@ -54,7 +55,7 @@ def helloworld(request):
         point.position_long = float(point.position_long) * 180 / 2147483648;
         #print point.position_lat,point.position_long
     #js_data = json.dumps(existing_points)
-    js_data = serializers.serialize('json',existing_points)
+    js_data = serializers.serialize('json',[x.fileid for x in existing_points])
     context = {'js_data': js_data}
     
     return render(request,'fitparser/HelloWorld.html',context)

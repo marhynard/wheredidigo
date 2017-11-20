@@ -13,7 +13,7 @@ django.setup()
 
 from fitparse import FitFile
 
-from fitparser.models import Point
+from fitparser.models import Point,Fileinfo
 import fitparser.views as parserviews
 
 fitfile = FitFile(r'C:\Users\matthew.rhynard\Documents\Python\2096759412.fit')
@@ -36,11 +36,27 @@ def testPointsDatabase():
 #        point.position_long = float(point.position_long) * semicirclesconversion;
 #        print point.position_lat,point.position_long
     print count
+
+def testJoinDatabase():
+    print "testPointsDatabase"
+    existing_points = Point.objects.select_related('fileid')
+    semicirclesconversion = ( float(180) / float(2147483648) )
+    count = 0    
+    for point in existing_points:
+        count += 1
+        print point.fileid
+        print point.fileid.activitytype
+#        point.position_lat = float(point.position_lat) * semicirclesconversion;
+#        point.position_long = float(point.position_long) * semicirclesconversion;
+#        print point.position_lat,point.position_long
+    print count
+
     
 def main():
     print "main" 
     #testViews()
-    testPointsDatabase()
+    #testPointsDatabase()
+    testJoinDatabase()
     
     
     

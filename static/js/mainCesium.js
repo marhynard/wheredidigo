@@ -72,10 +72,11 @@ function addPointCollection(pointType){
     for(x in tmp){
     
         var z=tmp[x];
+		var type = z.fields.activitytype;
         var lat= z.fields.position_lat; //  * ( 180 / power );
         var lon= z.fields.position_long; //  * ( 180 / power );
 		var alt = z.fields.altitude;
-		if(pointType == 0){
+		if(type == 2){
 			otherPoints.add({
 				position : new Cesium.Cartesian3.fromDegrees(lon,lat),
 				color : Cesium.Color.YELLOW

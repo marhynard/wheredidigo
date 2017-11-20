@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 
@@ -10,7 +12,7 @@
         <h1>This Page is supposed to help in managing the files</h1>
 		<style>
 			table,th,td{
-				border:1x solid black;
+				border:1px solid black;
 			}
 		</style>
         {% if existing_files %}
@@ -38,7 +40,7 @@
         {% else %}
             <strong>There are no files present.</strong>
         {% endif %}
-
+		<script src="{% static 'js/manageFiles.js' %}"></script>
         <!--<a href="/rango/about/">About</a>-->
     </body>
 </html>

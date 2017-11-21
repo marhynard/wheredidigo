@@ -27,10 +27,10 @@ var runCheckbox = document.getElementById('runCheckbox');
 var otherCheckbox = document.getElementById('otherCheckbox');
 
 rideCheckbox.addEventListener('change', function() {
-  viewer.scene.skyAtmosphere = rideCheckbox.checked ? skyAtmosphere : undefined;
+  viewer.scene.primitives.ridePoints = rideCheckbox.checked ? ridePoints : undefined;
 }, false);
 runCheckbox.addEventListener('change', function() {
-  viewer.scene.skyAtmosphere = runCheckbox.checked ? skyAtmosphere : undefined;
+  viewer.scene.primitives.runPoints = runCheckbox.checked ? runPoints : undefined;
 }, false);
 otherCheckbox.addEventListener('change', function() {
   viewer.scene.primitives.otherPoints = otherCheckbox.checked ? otherPoints : undefined;
@@ -72,14 +72,29 @@ function addPointCollection(pointType){
     for(x in tmp){
     
         var z=tmp[x];
-		var type = z.fields.activitytype;
-        var lat= z.fields.position_lat; //  * ( 180 / power );
-        var lon= z.fields.position_long; //  * ( 180 / power );
-		var alt = z.fields.altitude;
-		if(type == 2){
+		var type = z.activitytype;
+        var lat= z.position_lat; //  * ( 180 / power );
+        var lon= z.position_long; //  * ( 180 / power );
+		//var alt = z.altitude;
+		if(type == 0){
 			otherPoints.add({
 				position : new Cesium.Cartesian3.fromDegrees(lon,lat),
+				pixelSize : 5,
 				color : Cesium.Color.YELLOW
+			});
+		}
+		if(type == 1){
+			ridePoints.add({
+				position : new Cesium.Cartesian3.fromDegrees(lon,lat),
+				pixelSize : 5,
+				color : Cesium.Color.GREEN
+			});
+		}
+		if(type == 2){
+			runPoints.add({
+				position : new Cesium.Cartesian3.fromDegrees(lon,lat),
+				pixelSize : 5,
+				color : Cesium.Color.BLUE
 			});
 		}
     }
@@ -272,7 +287,7 @@ Sandcastle.addToolbarMenu([{
             })
         }
     });*/
-addPointCollection(0);
+addPointCollection(1);
 //addPointCollection();
 
 viewer.zoomTo(viewer.entities);

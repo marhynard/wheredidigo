@@ -46,6 +46,7 @@ def testJoinDatabase():
         count += 1
         print point.fileid
         print point.fileid.activitytype
+        print point.timestamp
 #        point.position_lat = float(point.position_lat) * semicirclesconversion;
 #        point.position_long = float(point.position_long) * semicirclesconversion;
 #        print point.position_lat,point.position_long

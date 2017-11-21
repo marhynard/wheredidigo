@@ -49,13 +49,15 @@ def helloworld(request):
     #existing_points = Point.objects.all()
     existing_points = Point.objects.select_related('fileid')
     #semicircles * ( 180 / 2^31 )
-    
+    pointList = []
     for point in existing_points:
         point.position_lat = float(point.position_lat) * 180 / 2147483648;
         point.position_long = float(point.position_long) * 180 / 2147483648;
+        pointList.append({'filename':point.fileid.filename,'activitytype':point.fileid.activitytype,'position_lat':point.position_lat,'position_long':point.position_long})
+        
         #print point.position_lat,point.position_long
-    #js_data = json.dumps(existing_points)
-    js_data = serializers.serialize('json',[x.fileid for x in existing_points])
+    js_data = json.dumps(pointList)
+    #js_data = serializers.serialize('json',pointList)
     context = {'js_data': js_data}
     
     return render(request,'fitparser/HelloWorld.html',context)

@@ -16,9 +16,13 @@ var viewer = new Cesium.Viewer('cesiumContainer',{
 });
 
 var skyAtmosphere = viewer.scene.skyAtmosphere;
-var runPoints = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection());
-var ridePoints = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection());
-var otherPoints = viewer.scene.primitives.add(new Cesium.PointPrimitiveCollection());
+var runPoints = new Cesium.PointPrimitiveCollection();
+var ridePoints = new Cesium.PointPrimitiveCollection();
+var otherPoints = new Cesium.PointPrimitiveCollection();
+
+viewer.scene.primitives.add(runPoints);
+viewer.scene.primitives.add(ridePoints);
+viewer.scene.primitives.add(otherPoints);
 
 
 
@@ -27,17 +31,28 @@ var runCheckbox = document.getElementById('runCheckbox');
 var otherCheckbox = document.getElementById('otherCheckbox');
 
 rideCheckbox.addEventListener('change', function() {
-  viewer.scene.primitives.ridePoints = rideCheckbox.checked ? ridePoints : undefined;
-}, false);
+	console.log("testing this out: " + rideCheckbox.checked);
+	console.log("ridePoints: " + ridePoints.length)
+	let length = ridePoints.length;
+	for (var i = 0; i < length; ++i) {
+		var p = ridePoints.get(i);
+		p.show = !p.show;
+	}
+},false);
 runCheckbox.addEventListener('change', function() {
-  viewer.scene.primitives.runPoints = runCheckbox.checked ? runPoints : undefined;
-}, false);
+  	let length = runPoints.length;
+	for (var i = 0; i < length; ++i) {
+		var p = runPoints.get(i);
+		p.show = !p.show;
+	}
+});
 otherCheckbox.addEventListener('change', function() {
-  viewer.scene.primitives.otherPoints = otherCheckbox.checked ? otherPoints : undefined;
-  //TODO not sure the exact order or syntax of this but want to be able to toggle the points on and off.  Not sure if I want to load everything right away.
-  
-  
-}, false);
+  	let length = otherPoints.length;
+	for (var i = 0; i < length; ++i) {
+		var p = otherPoints.get(i);
+		p.show = !p.show;
+	}
+});
 
 
 
@@ -72,6 +87,7 @@ function addPointCollection(pointType){
     for(x in tmp){
     
         var z=tmp[x];
+		var filename = z.filename;
 		var type = z.activitytype;
         var lat= z.position_lat; //  * ( 180 / power );
         var lon= z.position_long; //  * ( 180 / power );

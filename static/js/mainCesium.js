@@ -8,7 +8,9 @@
 
 //TODO add the ability to drag files for upload
 
-
+var rideFileList = [];
+var runFileList = [];
+var otherFileList = [];
 
 var viewer = new Cesium.Viewer('cesiumContainer',{
     animation : false,
@@ -29,6 +31,8 @@ viewer.scene.primitives.add(otherPoints);
 var rideCheckbox = document.getElementById('rideCheckbox');
 var runCheckbox = document.getElementById('runCheckbox');
 var otherCheckbox = document.getElementById('otherCheckbox');
+
+
 
 rideCheckbox.addEventListener('change', function() {
 	console.log("testing this out: " + rideCheckbox.checked);
@@ -92,7 +96,12 @@ function addPointCollection(pointType){
         var lat= z.position_lat; //  * ( 180 / power );
         var lon= z.position_long; //  * ( 180 / power );
 		//var alt = z.altitude;
+		
 		if(type == 0){
+			if( otherFileList.indexOf(filename) < 0){
+				otherFileList.push(filename);	
+			}
+			
 			otherPoints.add({
 				position : new Cesium.Cartesian3.fromDegrees(lon,lat),
 				pixelSize : 5,
@@ -100,6 +109,9 @@ function addPointCollection(pointType){
 			});
 		}
 		if(type == 1){
+			if( rideFileList.indexOf(filename) < 0){
+				rideFileList.push(filename);	
+			}
 			ridePoints.add({
 				position : new Cesium.Cartesian3.fromDegrees(lon,lat),
 				pixelSize : 5,
@@ -107,16 +119,43 @@ function addPointCollection(pointType){
 			});
 		}
 		if(type == 2){
+			if( runFileList.indexOf(filename) < 0){
+				runFileList.push(filename);	
+			}
 			runPoints.add({
 				position : new Cesium.Cartesian3.fromDegrees(lon,lat),
 				pixelSize : 5,
 				color : Cesium.Color.BLUE
 			});
 		}
+		
     }
     //return points;
-    
+    console.log(rideFileList);
 }
+
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+    acc[i].onclick = function(){
+        /* Toggle between adding and removing the "active" class,
+        to highlight the button that controls the panel */
+        this.classList.toggle("active");
+
+        /* Toggle between hiding and showing the active panel */
+        var panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+            panel.style.display = "none";
+        } else {
+            panel.style.display = "block";
+        }
+    }
+}
+
+
+
+
 //https://stackoverflow.com/questions/247483/http-get-request-in-javascript
 function httpGetAsync(theUrl, callback)
 {

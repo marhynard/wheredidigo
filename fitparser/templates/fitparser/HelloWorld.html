@@ -36,6 +36,42 @@
 	label:hover span {
 	  text-decoration: underline;
 	}
+	
+	/* Style the buttons that are used to open and close the accordion panel */
+	button.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+	}
+
+	/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+	button.accordion.active, button.accordion:hover {
+    background-color: #ccc;
+	}
+
+/* Style the accordion panel. Note: hidden by default */
+	div.panel {
+    padding: 0 18px;
+    background-color: white;
+    display: none;
+	}
+	button.accordion:after {
+    content: '\02795'; /* Unicode character for "plus" sign (+) */
+    font-size: 13px;
+    color: #777;
+    float: right;
+    margin-left: 5px;
+}
+
+button.accordion.active:after {
+    content: "\2796"; /* Unicode character for "minus" sign (-) */
+}
 
   </style>
 </head>
@@ -64,6 +100,32 @@
     <button class="cesium-button">Button 1</button>
     <button class="cesium-button">Button 2</button>
   </p>
+  
+  <p><select id="collapsible-menu-transition"> <br />
+    <option value="slide">Slide</option>
+    <option value="fade">Fade</option>
+    <option value="grow">Grow/Shrink</option>
+    <option value="" selected="selected">Appear/Disappear</option>
+    <option value="accordion">Accordion</option>
+</select></p>
+
+<button class="accordion">Ride Activities</button>
+<div class="panel">
+  <p>Lorem ipsum...</p>
+</div>
+
+<button class="accordion">Run Activities</button>
+<div class="panel">
+  <p>Lorem ipsum...</p>
+</div>
+
+<button class="accordion">Other Activities</button>
+<div class="panel">
+  <p>Lorem ipsum...</p>
+</div>
+  
+  
+  
 </div>
 <script src="{% static 'js/mainCesium.js' %}"></script>
 </body>

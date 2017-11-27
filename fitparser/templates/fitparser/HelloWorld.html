@@ -13,7 +13,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
-  <title>Hello World!</title>
+  <title>Where Did I Go!</title>
   
   <!--<script src="../Build/Cesium/Cesium.js"></script>-->
   <script src="{% static 'Cesium-1.38/Build/Cesium/Cesium.js' %}"></script>
@@ -42,7 +42,7 @@
     background-color: #eee;
     color: #444;
     cursor: pointer;
-    padding: 18px;
+    padding: 5px 8px;
     width: 100%;
     text-align: left;
     border: none;
@@ -57,21 +57,22 @@
 
 /* Style the accordion panel. Note: hidden by default */
 	div.panel {
-    padding: 0 18px;
+    padding: 5px 8px;
     background-color: white;
     display: none;
 	}
+	
 	button.accordion:after {
     content: '\02795'; /* Unicode character for "plus" sign (+) */
     font-size: 13px;
     color: #777;
     float: right;
-    margin-left: 5px;
-}
 
-button.accordion.active:after {
-    content: "\2796"; /* Unicode character for "minus" sign (-) */
-}
+	}
+
+	button.accordion.active:after {
+		content: "\2796"; /* Unicode character for "minus" sign (-) */
+	}
 
   </style>
 </head>
@@ -97,32 +98,30 @@ button.accordion.active:after {
       <input id="otherCheckbox" type="checkbox" checked />
       <span>Enable Other activities</span>
     </label><br/>
-    <button class="cesium-button">Button 1</button>
-    <button class="cesium-button">Button 2</button>
   </p>
   
-  <p><select id="collapsible-menu-transition"> <br />
-    <option value="slide">Slide</option>
-    <option value="fade">Fade</option>
-    <option value="grow">Grow/Shrink</option>
-    <option value="" selected="selected">Appear/Disappear</option>
-    <option value="accordion">Accordion</option>
-</select></p>
+	<p>	
+		<select id="collapsible-menu-transition"> <br />
+			<option value="ride">Ride Activities</option>
+			<option value="run">Run Activities</option>
+			<option value="other">Other Activities</option>
+		</select>
+	</p>
 
-<button class="accordion">Ride Activities</button>
-<div class="panel">
-  <p id="rideactivities"></p>
-</div>
+	<button class="accordion">Ride Activities</button>
+	<div class="panel">
+	  <p id="rideactivities"></p>
+	</div>
 
-<button class="accordion">Run Activities</button>
-<div class="panel">
-  <p id="runactivities"></p>
-</div>
+	<button class="accordion">Run Activities</button>
+	<div class="panel">
+	  <p id="runactivities"></p>
+	</div>
 
-<button class="accordion">Other Activities</button>
-<div class="panel">
-  <p id="otheractivities"></p>
-</div>
+	<button class="accordion">Other Activities</button>
+	<div class="panel">
+	  <p id="otheractivities"></p>
+	</div>
   
   
   

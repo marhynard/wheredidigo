@@ -12,6 +12,8 @@ var rideFileList = [];
 var runFileList = [];
 var otherFileList = [];
 
+var fileButtonList = [];
+
 var viewer = new Cesium.Viewer('cesiumContainer',{
     animation : false,
     timeline : false
@@ -82,6 +84,13 @@ function getPointsList(){
     return pointslist;
     
 }
+
+function addFileCheckBox(filename){
+	let checkboxtext = "<label><input id=\""+ filename + "\"-checkbox\" type=checkbox checked/><span>"+ filename +"</span></label>";
+	fileButtonList.push(filename + "-checkbox");
+    return checkboxtext;
+}
+
 function addPointCollection(pointType){
 	
     var t = js_data;
@@ -131,9 +140,18 @@ function addPointCollection(pointType){
 		
     }
     //return points;
-	document.getElementById('rideactivities').innerHTML = rideFileList;
-	document.getElementById('runactivities').innerHTML = runFileList;
-	document.getElementById('otheractivities').innerHTML = otherFileList;
+	for (i = 0, len = rideFileList.length, text = ""; i < len; i++) { 
+		text += addFileCheckBox(rideFileList[i]) + "<br>";
+	}
+	document.getElementById('rideactivities').innerHTML = text;
+	for (i = 0, len = runFileList.length, text = ""; i < len; i++) { 
+		text += addFileCheckBox(runFileList[i]) + "<br>";
+	}
+	document.getElementById('runactivities').innerHTML = text;
+	for (i = 0, len = otherFileList.length, text = ""; i < len; i++) { 
+		text += addFileCheckBox(otherFileList[i]) + "<br>";
+	}
+	document.getElementById('otheractivities').innerHTML = text;
     console.log(rideFileList);
 	
 }

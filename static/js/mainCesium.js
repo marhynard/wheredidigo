@@ -131,7 +131,11 @@ function addPointCollection(pointType){
 		
     }
     //return points;
+	document.getElementById('rideactivities').innerHTML = rideFileList;
+	document.getElementById('runactivities').innerHTML = runFileList;
+	document.getElementById('otheractivities').innerHTML = otherFileList;
     console.log(rideFileList);
+	
 }
 
 var acc = document.getElementsByClassName("accordion");

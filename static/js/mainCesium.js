@@ -4,7 +4,9 @@
 
 //TODO create a heatmap based on time selected
 
-//TODO add the ability to toggle tracks
+//TODO add the ability to toggle individual tracks
+//TODO organize the activities by date YEAR-MONTH-DAY in an accordian
+
 
 //TODO add the ability to drag files for upload
 

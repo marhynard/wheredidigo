@@ -46,6 +46,15 @@ rideCheckbox.addEventListener('change', function() {
 		var p = ridePoints.get(i);
 		p.show = !p.show;
 	}
+	
+	var htmltxt = document.getElementById('rideactivities').innerHTML;
+	console.log("html: " + htmltxt);
+	for (var i = 0; i <fileButtonList.length; ++i ){
+		var checkboxid = fileButtonList[i];
+		var fileCheckbox = document.getElementById(checkboxid);	
+		fileCheckbox.checked = !fileCheckbox.checked
+	}
+	
 },false);
 runCheckbox.addEventListener('change', function() {
   	let length = runPoints.length;
@@ -88,7 +97,7 @@ function getPointsList(){
 }
 
 function addFileCheckBox(filename){
-	let checkboxtext = "<label><input id=\""+ filename + "\"-checkbox\" type=checkbox checked/><span>"+ filename +"</span></label>";
+	let checkboxtext = "<label><input id=\""+ filename + "-checkbox\" type=checkbox checked/><span>"+ filename +"</span></label>";
 	fileButtonList.push(filename + "-checkbox");
     return checkboxtext;
 }

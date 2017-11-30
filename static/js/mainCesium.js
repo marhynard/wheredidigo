@@ -52,7 +52,7 @@ rideCheckbox.addEventListener('change', function() {
 	for (var i = 0; i <fileButtonList.length; ++i ){
 		var checkboxid = fileButtonList[i];
 		var fileCheckbox = document.getElementById(checkboxid);	
-		fileCheckbox.checked = !fileCheckbox.checked
+		fileCheckbox.checked = rideCheckbox.checked;
 	}
 	
 },false);
@@ -62,12 +62,22 @@ runCheckbox.addEventListener('change', function() {
 		var p = runPoints.get(i);
 		p.show = !p.show;
 	}
+	for (var i = 0; i <fileButtonList.length; ++i ){
+		var checkboxid = fileButtonList[i];
+		var fileCheckbox = document.getElementById(checkboxid);	
+		fileCheckbox.checked = rideCheckbox.checked;
+	}
 });
 otherCheckbox.addEventListener('change', function() {
   	let length = otherPoints.length;
 	for (var i = 0; i < length; ++i) {
 		var p = otherPoints.get(i);
 		p.show = !p.show;
+	}
+	for (var i = 0; i <fileButtonList.length; ++i ){
+		var checkboxid = fileButtonList[i];
+		var fileCheckbox = document.getElementById(checkboxid);	
+		fileCheckbox.checked = rideCheckbox.checked;
 	}
 });
 

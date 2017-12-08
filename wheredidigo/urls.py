@@ -20,7 +20,7 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^fitparser/', include('fitparser.urls')),
-    url(r'^', include('example.urls')),    
+#    url(r'^fitparser/', include('fitparser.urls')),
+    url(r'^', include('fitparser.urls')),    
 #TODO add an app for administering some of the details of the activities 
 ]# + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

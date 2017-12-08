@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render
-#from django.views.generic import TemplateView # Import TemplateView
+from django.views.generic import TemplateView # Import TemplateView
 from django.http import HttpResponse
 from django.core import serializers
 import json
@@ -62,6 +62,18 @@ def helloworld(request):
     
     return render(request,'fitparser/HelloWorld.html',context)
     
+class HomePageView(TemplateView):
+    def get(self, request, **kwargs):
+        return render(request, 'fitparser/angulartest.html', context=None)
+ 
+class LinksPageView(TemplateView):
+    def get(self, request, **kwargs):
+        return render(request, 'links.html', context=None)
+		
+class Customers(TemplateView):
+    def getCust(request):
+        name='liran'
+        return HttpResponse('{ "name":"' + name + '", "age":31, "city":"New York" }')
 #class HelloWorldPageView(TemplateView):
 #    template_name = "fitparser/HelloWorld.html"
     

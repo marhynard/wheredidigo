@@ -85,6 +85,15 @@ class Customers(TemplateView):
     def getCust(request):
         name='liran'
         return HttpResponse('{ "name":"' + name + '", "age":31, "city":"New York" }')
+		
+def getcust(request):
+    name='liran'
+    js_data = '{ "name":"' + name + '", "age":31, "city":"New York" }'
+    #js_data = serializers.serialize('json',pointList)
+    context = {'js_data': js_data}
+    
+    return HttpResponse(js_data)		
+		
 #class HelloWorldPageView(TemplateView):
 #    template_name = "fitparser/HelloWorld.html"
     

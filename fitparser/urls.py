@@ -24,6 +24,7 @@ urlpatterns = [
         url(r'^pointviewer$', views.pointViewer, name='pointviewer'),
         url(r'^angulartest$', views.HomePageView.as_view()),
         url(r'^links/$' , views.LinksPageView.as_view()),
-        url(r'^getcust/$',views.Customers.getCust),
+        #url(r'^getcust/$',views.Customers.getCust),
+        url(r'^getcust/$', views.getcust, name='getcust'),
 
 ]

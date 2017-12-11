@@ -121,9 +121,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-
+ANGULAR_CESIUM_URL = os.path.join(BASE_DIR,'angularcesiumapp/dist')
+print BASE_DIR
 STATICFILES_DIRS = (
         os.path.join(BASE_DIR,'static'),
+        ANGULAR_CESIUM_URL,
+        'C:\Users\matt\Documents\Python Scripts\wheredidigo\angularcesiumapp\dist',
    )
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

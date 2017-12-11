@@ -9,6 +9,7 @@
 
 # dependencies
 /angularcesiumapp/node_modules
+/angularcesiumapp/dist
 
 # IDEs and editors
 /.idea

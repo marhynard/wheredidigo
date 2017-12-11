@@ -1,44 +1,22 @@
-<!DOCTYPE html>
-<html>
+{% load static %}
 
-	
-    <head>
-        <title>Point Viewer</title>
-    </head>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Wheredidigo</title>
+  <base href="/">
 
-    <body>
-        <h1>This is the Point Viewer!</h1>
-		<style>
-			table,th,td{
-				border:1px solid black;
-			}
-		</style>
-        {% if existing_points %}
-
-			<table style="width:100%">
-				<tr>
-					<th>time</th>
-					<th>distance</th>
-					<th>Latitude</th>
-					<th>Longitude</th>
-					<th>altitude</th>
-				</tr>
-            
-                {% for point in existing_points %}
-					<tr>
-						<td>{{ point.timestamp }}</td>
-						<td>{{ point.distance }}</td>
-						<td>{{ point.position_lat }}</td>
-						<td>{{ point.position_long }}</td>
-						<td>{{ point.altitude }}</td>
-					</tr>
-                {% endfor %}
-            
-			</table>
-        {% else %}
-            <strong>There are no points present.</strong>
-        {% endif %}
-
-        <!--<a href="/rango/about/">About</a>-->
-    </body>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+  <app-root>Loading...</app-root>
+<script type="text/javascript" src="{% static 'inline.bundle.js' %}"></script>
+<script type="text/javascript" src="{% static 'polyfills.bundle.js' %}"></script>
+<script type="text/javascript" src="{% static 'scripts.bundle.js' %}"></script>
+<script type="text/javascript" src="{% static 'styles.bundle.js' %}"></script>
+<script type="text/javascript" src="{% static 'vendor.bundle.js' %}"></script>
+<script type="text/javascript" src="{% static 'main.bundle.js' %}"></script>
+</body>
 </html>

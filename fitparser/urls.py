@@ -15,6 +15,7 @@ urlpatterns = [
         url(r'^helloworld$', views.helloworld, name='helloworld'),
         #url(r'^angulartest$', views.angulartest, name='angulartest'),
         url(r'^manage$', views.getFileList, name='manage'),
+		url(r'^pointviewer$', views.pointViewer, name='pointviewer'),
         url(r'^angulartest$', views.HomePageView.as_view()),
         url(r'^links/$' , views.LinksPageView.as_view()),
         url(r'^getcust/$',views.Customers.getCust),

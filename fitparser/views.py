@@ -11,9 +11,15 @@ from .models import Point,Fileinfo
 
 # Create your views here.
 def index(request):
+ 
+    context = {'existing_points':'test'}
+    return render(request,'fitparser/index.html',context)
+    #return HttpResponse("Hello, world. You're at the fitparse index.")
+	
+def pointViewer(request):
     existing_points = Point.objects.all()
     context = {'existing_points':existing_points}
-    return render(request,'fitparser/index.html',context)
+    return render(request,'fitparser/pointviewer.html',context)
     #return HttpResponse("Hello, world. You're at the fitparse index.")
 
 #TODO need to fix and make it a valid request

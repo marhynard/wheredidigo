@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+CORS_ORIGIN_ALLOW_ALL = True
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,13 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'example',
+    'corsheaders',
     'fitparser.apps.FitparserConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -126,7 +127,6 @@ print BASE_DIR
 STATICFILES_DIRS = (
         os.path.join(BASE_DIR,'static'),
         ANGULAR_CESIUM_URL,
-        'C:\Users\matt\Documents\Python Scripts\wheredidigo\angularcesiumapp\dist',
    )
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

@@ -15,6 +15,11 @@ def index(request):
     context = {'existing_points':'test'}
     return render(request,'fitparser/index.html',context)
     #return HttpResponse("Hello, world. You're at the fitparse index.")
+class indexView(TemplateView):
+    def get(self, request, **kwargs):
+        return render(request, 'fitparser/index.html', context=None)
+
+
 	
 def pointViewer(request):
     existing_points = Point.objects.all()

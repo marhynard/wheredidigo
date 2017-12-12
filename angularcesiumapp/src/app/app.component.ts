@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {Http, Response} from '@angular/http';
 import {Observable} from 'rxjs';
 import 'rxjs/add/operator/map';
+//import { MapsManagerService } from 'angular-cesium/src/angular-cesium/services/maps-manager/maps-manager.service';
 
 
 @Component({
@@ -13,6 +14,7 @@ export class AppComponent {
  
   constructor(private _http:Http) {
     this.c1.name = "eli"
+
    }
   title = 'app';
   c1:Cust = new Cust();

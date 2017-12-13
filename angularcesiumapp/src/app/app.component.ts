@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {Http, Response} from '@angular/http';
 import {Observable} from 'rxjs';
 import 'rxjs/add/operator/map';
-import { PointService } from 'point.service';
-//import { MapsManagerService } from 'angular-cesium/src/angular-cesium/services/maps-manager/maps-manager.service';
+import { Point } from './point';
+import { PointService } from './point.service';
+import { MapsManagerService } from '../../node_modules/angular-cesium/src/angular-cesium/services/maps-manager/maps-manager.service';
 
 
 @Component({
@@ -13,16 +14,30 @@ import { PointService } from 'point.service';
 })
 export class AppComponent implements OnInit  {
  
-  points: Point[];
+    points: Point[];
   
-  constructor(private _http:Http,private pointService: PointService) {
-    this.c1.name = "eli"
-
-   }
+    constructor(mapsManagerService: MapsManagerService,private _http:Http,private pointService: PointService) {
+        const viewer = mapsManagerService.getMap().getCesiumViewer();
+        
+        /*var glowingLine = viewer.entities.add({
+    name : 'Glowing blue line on the surface',
+    polyline : {
+    positions : Cesium.Cartesian3.fromDegreesArray([-75, 37,-95, 36,-125, 37]),
+    //positions : Cesium.Cartesian3.fromDegreesArray(pointslist),
+    width : 10,
+    material : new Cesium.PolylineGlowMaterialProperty({
+                                                        glowPower : 0.2,
+                                                        color : Cesium.Color.ORANGE
+            })
+        }
+    });
+        */
+        this.c1.name = "eli";
+    }
    
-     ngOnInit() {
-  this.getPoints();
-  }
+    ngOnInit() {
+        this.getPoints();
+    }
    
   title = 'app';
   c1:Cust = new Cust();
@@ -37,8 +52,8 @@ export class AppComponent implements OnInit  {
           .map(r => <Cust>r.json())
   }
   
-  getPoints(): void {
-	this.pointService.getPoints().subscribe(points => this.points = points);
+    getPoints(): void {
+        this.pointService.getPoints().subscribe(points => this.points = points);
 	}
   
   

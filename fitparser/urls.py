@@ -26,5 +26,6 @@ urlpatterns = [
         url(r'^links/$' , views.LinksPageView.as_view()),
         #url(r'^getcust/$',views.Customers.getCust),
         url(r'^getcust/$', views.getcust, name='getcust'),
+        url(r'^getpoints/$', views.getpoints, name='getpoints'),
 
 ]

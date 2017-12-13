@@ -1,14 +1,7 @@
 import { Point } from './point';
 
 export const POINTS: Point[] = [
-  { id: 11, name: 'Mr. Nice' },
-  { id: 12, name: 'Narco' },
-  { id: 13, name: 'Bombasto' },
-  { id: 14, name: 'Celeritas' },
-  { id: 15, name: 'Magneta' },
-  { id: 16, name: 'RubberMan' },
-  { id: 17, name: 'Dynama' },
-  { id: 18, name: 'Dr IQ' },
-  { id: 19, name: 'Magma' },
-  { id: 20, name: 'Tornado' }
+  { filename: 'file1',activitytype: 1, position_lat: 75.0, position_long: 30.0 },
+  { filename: 'file1',activitytype: 1, position_lat: 75.1, position_long: 30.1 },
+  { filename: 'file2',activitytype: 1, position_lat: 75.2, position_long: 30.2 },
 ];

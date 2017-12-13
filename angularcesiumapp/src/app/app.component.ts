@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {Http, Response} from '@angular/http';
 import {Observable} from 'rxjs';
 import 'rxjs/add/operator/map';
+import { PointService } from 'point.service';
 //import { MapsManagerService } from 'angular-cesium/src/angular-cesium/services/maps-manager/maps-manager.service';
 
 
@@ -10,12 +11,19 @@ import 'rxjs/add/operator/map';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit  {
  
-  constructor(private _http:Http) {
+  points: Point[];
+  
+  constructor(private _http:Http,private pointService: PointService) {
     this.c1.name = "eli"
 
    }
+   
+     ngOnInit() {
+  this.getPoints();
+  }
+   
   title = 'app';
   c1:Cust = new Cust();
   click1(){
@@ -28,6 +36,12 @@ export class AppComponent {
           .get("./getcust")
           .map(r => <Cust>r.json())
   }
+  
+  getPoints(): void {
+	this.pointService.getPoints().subscribe(points => this.points = points);
+	}
+  
+  
 }
  
 export class Cust{

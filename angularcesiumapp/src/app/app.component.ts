@@ -4,7 +4,7 @@ import {Observable} from 'rxjs';
 import 'rxjs/add/operator/map';
 import { Point } from './point';
 import { PointService } from './point.service';
-import { MapsManagerService } from '../../node_modules/angular-cesium/src/angular-cesium/services/maps-manager/maps-manager.service';
+//import { MapsManagerService } from '../../node_modules/angular-cesium/src/angular-cesium/services/maps-manager/maps-manager.service';
 
 
 @Component({
@@ -15,9 +15,9 @@ import { MapsManagerService } from '../../node_modules/angular-cesium/src/angula
 export class AppComponent implements OnInit  {
  
     points: Point[];
-  
-    constructor(mapsManagerService: MapsManagerService,private _http:Http,private pointService: PointService) {
-        const viewer = mapsManagerService.getMap().getCesiumViewer();
+  //mapsManagerService: MapsManagerService,
+    constructor(private _http:Http,private pointService: PointService) {
+        //const viewer = mapsManagerService.getMap().getCesiumViewer();
         
         /*var glowingLine = viewer.entities.add({
     name : 'Glowing blue line on the surface',

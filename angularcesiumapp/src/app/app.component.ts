@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,AfterViewInit } from '@angular/core';
 import {Http, Response} from '@angular/http';
 import {Observable} from 'rxjs';
 import 'rxjs/add/operator/map';
 import { Point } from './point';
 import { PointService } from './point.service';
-//import { MapsManagerService } from '../../node_modules/angular-cesium/src/angular-cesium/services/maps-manager/maps-manager.service';
+import { MapsManagerService } from 'angular-cesium';
 
 
 @Component({
@@ -12,11 +12,14 @@ import { PointService } from './point.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit  {
+export class AppComponent implements OnInit,AfterViewInit  {
  
     points: Point[];
-  //mapsManagerService: MapsManagerService,
-    constructor(private _http:Http,private pointService: PointService) {
+    cesiumViewer;
+    
+    constructor(private _http:Http,
+                private pointService: PointService,
+                private mapsManagerService: MapsManagerService) {
         //const viewer = mapsManagerService.getMap().getCesiumViewer();
         
         /*var glowingLine = viewer.entities.add({
@@ -32,25 +35,29 @@ export class AppComponent implements OnInit  {
         }
     });
         */
-        this.c1.name = "eli";
+        //this.c1.name = "eli";
     }
    
     ngOnInit() {
-        this.getPoints();
+        
     }
    
-  title = 'app';
-  c1:Cust = new Cust();
-  click1(){
-    this.getAllBooks().subscribe(b => this.c1 = b)
-  }
- 
-  getAllBooks()
-  {
-    return this._http
-          .get("./getcust")
-          .map(r => <Cust>r.json())
-  }
+    ngAfterViewInit(){
+        //this.getPoints();
+        const cesiumViewer = this.mapsManagerService.getMap().getCesiumViewer()
+        var glowingLine = cesiumViewer.entities.add({
+    name : 'Glowing blue line on the surface',
+    polyline : {
+    positions : Cesium.Cartesian3.fromDegreesArray([-75, 37,-95, 36,-125, 37]),
+    //positions : Cesium.Cartesian3.fromDegreesArray(pointslist),
+    width : 10,
+    material : new Cesium.PolylineGlowMaterialProperty({
+                                                        glowPower : 0.2,
+                                                        color : Cesium.Color.ORANGE
+            })
+        }
+    });
+    }
   
     getPoints(): void {
         this.pointService.getPoints().subscribe(points => this.points = points);

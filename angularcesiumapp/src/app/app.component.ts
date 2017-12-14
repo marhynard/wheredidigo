@@ -16,6 +16,10 @@ export class AppComponent implements OnInit,AfterViewInit  {
  
     points: Point[];
     cesiumViewer;
+    runPoints;
+    ridePoints;
+    otherPoints;
+
     
     constructor(private _http:Http,
                 private pointService: PointService,
@@ -39,12 +43,32 @@ export class AppComponent implements OnInit,AfterViewInit  {
     }
    
     ngOnInit() {
-        
+        this.getPoints();
     }
    
     ngAfterViewInit(){
         //this.getPoints();
         const cesiumViewer = this.mapsManagerService.getMap().getCesiumViewer()
+        console.log("got viewer");
+
+        this.runPoints = new Cesium.PointPrimitiveCollection();
+        this.ridePoints = new Cesium.PointPrimitiveCollection();
+        this.otherPoints = new Cesium.PointPrimitiveCollection();
+        console.log("created primitives");
+        
+        
+        
+        
+        console.log("got points");
+        this.addPointCollection();
+        console.log("added collections");
+        
+        
+        cesiumViewer.scene.primitives.add(this.runPoints);
+        cesiumViewer.scene.primitives.add(this.ridePoints);
+        cesiumViewer.scene.primitives.add(this.otherPoints);
+        console.log("added primitives");
+        /*
         var glowingLine = cesiumViewer.entities.add({
     name : 'Glowing blue line on the surface',
     polyline : {
@@ -56,14 +80,64 @@ export class AppComponent implements OnInit,AfterViewInit  {
                                                         color : Cesium.Color.ORANGE
             })
         }
-    });
+    });*/
+        
     }
   
     getPoints(): void {
         this.pointService.getPoints().subscribe(points => this.points = points);
 	}
   
+    addPointCollection(): void{
+	
+    //var t = js_data;
+    //var tmp=JSON.parse(js_data);
+	//console.log(this.points.length)
+	var x;
+    for(x in this.points){
+        
+        var z=this.points[x];
+		var filename = z.filename;
+		var type = z.activitytype;
+        var lat= z.position_lat; //  * ( 180 / power );
+        var lon= z.position_long; //  * ( 180 / power );
+		//var alt = z.altitude;
+		console.log(filename);
+		if(type == 0){
+			/*if( otherFileList.indexOf(filename) < 0){
+				otherFileList.push(filename);	
+			}*/
+			
+			this.otherPoints.add({
+				position : new Cesium.Cartesian3.fromDegrees(lon,lat),
+				pixelSize : 5,
+				color : Cesium.Color.YELLOW
+			});
+		}
+		if(type == 1){
+			/*if( rideFileList.indexOf(filename) < 0){
+				rideFileList.push(filename);	
+			}*/
+			this.ridePoints.add({
+				position : new Cesium.Cartesian3.fromDegrees(lon,lat),
+				pixelSize : 5,
+				color : Cesium.Color.GREEN
+			});
+		}
+		if(type == 2){
+			/*if( runFileList.indexOf(filename) < 0){
+				runFileList.push(filename);	
+			}*/
+			this.runPoints.add({
+				position : new Cesium.Cartesian3.fromDegrees(lon,lat),
+				pixelSize : 5,
+				color : Cesium.Color.BLUE
+			});
+		}
+		
+    }
   
+}
 }
  
 export class Cust{

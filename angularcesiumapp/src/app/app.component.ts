@@ -43,12 +43,12 @@ export class AppComponent implements OnInit,AfterViewInit  {
     }
    
     ngOnInit() {
-        this.getPoints();
+        //this.getPoints();
     }
    
     ngAfterViewInit(){
         //this.getPoints();
-        const cesiumViewer = this.mapsManagerService.getMap().getCesiumViewer()
+        /*const cesiumViewer = this.mapsManagerService.getMap().getCesiumViewer()
         console.log("got viewer");
 
         this.runPoints = new Cesium.PointPrimitiveCollection();
@@ -67,7 +67,7 @@ export class AppComponent implements OnInit,AfterViewInit  {
         cesiumViewer.scene.primitives.add(this.runPoints);
         cesiumViewer.scene.primitives.add(this.ridePoints);
         cesiumViewer.scene.primitives.add(this.otherPoints);
-        console.log("added primitives");
+        console.log("added primitives");*/
         /*
         var glowingLine = cesiumViewer.entities.add({
     name : 'Glowing blue line on the surface',
@@ -140,8 +140,3 @@ export class AppComponent implements OnInit,AfterViewInit  {
 }
 }
  
-export class Cust{
-    name:string;
-    age:number;
-    city:string;
-}

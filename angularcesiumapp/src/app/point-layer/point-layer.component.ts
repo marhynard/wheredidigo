@@ -1,15 +1,35 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Observable } from 'rxjs';
+import { AcNotification } from 'angular-cesium/models/ac-notification';
+import { AcLayerComponent } from 'src/angular-cesium/components/ac-layer/ac-layer.component';
+import { TracksDataProvider } from 'utils/services/dataProvider/tracksDataProvider.service';
 
 @Component({
-  selector: 'app-point-layer',
-  templateUrl: './point-layer.component.html',
-  styleUrls: ['./point-layer.component.css']
+	selector: 'app-point-layer',
+	templateUrl: 'point-layer.component.html',
+	styleUrls: ['./point-layer.component.css'],
+	providers: [TracksDataProvider]
 })
 export class PointLayerComponent implements OnInit {
+	@ViewChild(AcLayerComponent) layer: AcLayerComponent;
 
-  constructor() { }
+	points$: Observable<AcNotification>;
+	Cesium = Cesium;
+	show = true;
 
-  ngOnInit() {
-  }
+	constructor(private tracksDataProvider: TracksDataProvider) {
+	}
+
+	ngOnInit() {
+		this.points$ = this.tracksDataProvider.get();
+	}
+
+	removeAll() {
+		this.layer.removeAll();
+	}
+
+	setShow($event: boolean) {
+		this.show = $event
+	}
 
 }

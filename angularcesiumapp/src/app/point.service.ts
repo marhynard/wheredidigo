@@ -5,6 +5,7 @@ import { of } from 'rxjs/observable/of';
 // Import RxJs required methods
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import { Subscriber } from 'rxjs/Subscriber';
 
 import { Point } from './point';
 //import { POINTS } from './mock-points';

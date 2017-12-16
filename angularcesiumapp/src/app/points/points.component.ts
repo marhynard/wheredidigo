@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Point } from '../point';
-import { PointService } from '../point.service';
+import { Point } from '../../utils/services/dataProvider/point.model';
+import { PointService } from '../../utils/services/dataProvider/point.service';
 
 @Component({
   selector: 'app-points',

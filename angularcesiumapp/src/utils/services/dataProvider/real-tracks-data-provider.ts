@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+/*import { Injectable } from '@angular/core';
 import gql from 'graphql-tag';
 import { Apollo } from 'apollo-angular';
 import { ActionType } from '../../../../src/angular-cesium/models/action-type.enum';
@@ -151,3 +151,4 @@ export class RealTracksDataProvider {
     return this.createInterpolatedTracksObservable(fromServerTracks$);
   }
 }
+*/

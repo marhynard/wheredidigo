@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+/*import { Injectable } from '@angular/core';
 import { WebSocketSupplier } from '../webSocketSupplier/webSocketSupplier';
 import { Observable } from 'rxjs/Observable';
 import { ActionType } from '../../../../src/angular-cesium/models/action-type.enum';
@@ -96,3 +96,4 @@ export class SimTracksDataProvider {
     return arr.slice(0, size);
   }
 }
+*/

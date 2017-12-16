@@ -7,7 +7,7 @@ import { HttpClientModule  } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { PointsComponent } from './points/points.component';
-import { PointService } from './point.service';
+import { PointService } from '../utils/services/dataProvider/point.service';
 import { PointLayerComponent } from './point-layer/point-layer.component';
 
 

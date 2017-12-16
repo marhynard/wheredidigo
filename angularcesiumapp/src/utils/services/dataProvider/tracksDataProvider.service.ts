@@ -5,16 +5,17 @@ import { convertToCesiumObj } from '../dataCovertor/convertToCesiumObject';
 import { WebSocketSupplier } from '../webSocketSupplier/webSocketSupplier';
 import { Subscriber } from 'rxjs/Subscriber';
 
+
 @Injectable()
 export class TracksDataProvider {
-	private _socket: SocketIO.Socket;
+	//private _socket: SocketIO.Socket;
 
-	constructor(webSocketSupplier: WebSocketSupplier) {
-		this._socket = webSocketSupplier.get();
+	constructor(/*webSocketSupplier: WebSocketSupplier*/) {
+		//this._socket = webSocketSupplier.get();
 	}
 
 	get() {
-		return Observable.create((observer: Subscriber<any>) => {
+		/*return Observable.create((observer: Subscriber<any>) => {
 			this._socket.on('birds', (data: any) => {
 				data.forEach(
 					(acNotification: any) => {
@@ -30,6 +31,6 @@ export class TracksDataProvider {
 						observer.next(acNotification);
 					});
 			});
-		});
+		});*/
 	}
 }

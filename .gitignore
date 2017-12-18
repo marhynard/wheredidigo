@@ -6,6 +6,7 @@
 /out-tsc
 *.pyc
 */*.pyc
+db.sqlite3
 
 # dependencies
 /angularcesiumapp/node_modules

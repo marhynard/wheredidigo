@@ -2,8 +2,8 @@ import { Component, OnInit,AfterViewInit } from '@angular/core';
 import {Http, Response} from '@angular/http';
 import {Observable} from 'rxjs';
 import 'rxjs/add/operator/map';
-import { Point } from './point';
-import { PointService } from './point.service';
+import { Point } from '../utils/services/dataProvider/point.model';
+import { PointService } from '../utils/services/dataProvider/point.service';
 import { MapsManagerService } from 'angular-cesium';
 
 
@@ -23,7 +23,7 @@ export class AppComponent implements OnInit,AfterViewInit  {
     
     constructor(private _http:Http,
                 private pointService: PointService,
-                private mapsManagerService: MapsManagerService) {
+                /*private mapsManagerService: MapsManagerService*/) {
         //const viewer = mapsManagerService.getMap().getCesiumViewer();
         
         /*var glowingLine = viewer.entities.add({
@@ -48,8 +48,8 @@ export class AppComponent implements OnInit,AfterViewInit  {
    
     ngAfterViewInit(){
         //this.getPoints();
-        /*const cesiumViewer = this.mapsManagerService.getMap().getCesiumViewer()
-        console.log("got viewer");
+       //const cesiumViewer = this.mapsManagerService.getMap().getCesiumViewer()
+         /*console.log("got viewer");
 
         this.runPoints = new Cesium.PointPrimitiveCollection();
         this.ridePoints = new Cesium.PointPrimitiveCollection();
@@ -99,8 +99,8 @@ export class AppComponent implements OnInit,AfterViewInit  {
         var z=this.points[x];
 		var filename = z.filename;
 		var type = z.activitytype;
-        var lat= z.position_lat; //  * ( 180 / power );
-        var lon= z.position_long; //  * ( 180 / power );
+        var lat= z.position.lat; //  * ( 180 / power );
+        var lon= z.position.long; //  * ( 180 / power );
 		//var alt = z.altitude;
 		console.log(filename);
 		if(type == 0){

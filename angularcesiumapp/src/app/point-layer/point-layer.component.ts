@@ -5,7 +5,7 @@ import { AcLayerComponent } from '../../../node_modules/angular-cesium/src/angul
 import { TracksDataProvider } from '../../utils/services/dataProvider/tracksDataProvider.service';
 
 @Component({
-	selector: 'app-point-layer',
+	selector: 'point-layer',
 	templateUrl: 'point-layer.component.html',
 	styleUrls: ['./point-layer.component.css'],
 	providers: [TracksDataProvider]

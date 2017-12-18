@@ -23,7 +23,7 @@ export class AppComponent implements OnInit,AfterViewInit  {
     
     constructor(private _http:Http,
                 private pointService: PointService,
-                private mapsManagerService: MapsManagerService) {
+                /*private mapsManagerService: MapsManagerService*/) {
         //const viewer = mapsManagerService.getMap().getCesiumViewer();
         
         /*var glowingLine = viewer.entities.add({
@@ -48,8 +48,8 @@ export class AppComponent implements OnInit,AfterViewInit  {
    
     ngAfterViewInit(){
         //this.getPoints();
-        /*const cesiumViewer = this.mapsManagerService.getMap().getCesiumViewer()
-        console.log("got viewer");
+       //const cesiumViewer = this.mapsManagerService.getMap().getCesiumViewer()
+         /*console.log("got viewer");
 
         this.runPoints = new Cesium.PointPrimitiveCollection();
         this.ridePoints = new Cesium.PointPrimitiveCollection();

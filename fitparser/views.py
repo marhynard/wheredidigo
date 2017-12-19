@@ -101,7 +101,7 @@ def getpoints(request):
     for point in existing_points:
         point.position_lat = float(point.position_lat) * 180 / 2147483648;
         point.position_long = float(point.position_long) * 180 / 2147483648;
-        pointList.append({'filename':point.fileid.filename,'activitytype':point.fileid.activitytype,'position_lat':point.position_lat,'position_long':point.position_long})
+        pointList.append({'filename':point.fileid.filename,'activitytype':point.fileid.activitytype,"position":{'lat':point.position_lat,'long':point.position_long,'alt':point.altitude}})
     js_data = json.dumps(pointList)
     #context = {'js_data': existing_points}
     

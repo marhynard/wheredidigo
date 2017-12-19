@@ -23,6 +23,7 @@ const redMaterial = new Cesium.Material({
 });
 
 export function convertToCesiumObj(entity: any): any {
+    console.log("inside convertToCesiumObj");
 	// entity.scale = entity.id === 1 ? 0.3 : 0.15;
 	// entity.color = entity.id === 1 ? Cesium.Color.RED : undefined;
 	entity.position = Cesium.Cartesian3.fromDegrees(entity.position.long, entity.position.lat);

@@ -21,7 +21,9 @@ export class PointLayerComponent implements OnInit {
 	}
 
 	ngOnInit() {
+        console.log("point-layer");
 		this.points$ = this.tracksDataProvider.get();
+        console.log("got points");
 	}
 
 	removeAll() {

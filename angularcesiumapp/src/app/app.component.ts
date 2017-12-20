@@ -87,7 +87,7 @@ export class AppComponent implements OnInit,AfterViewInit  {
     getPoints(): void {
         this.pointService.getPoints().subscribe(points => this.points = points);
 	}
-  
+  /*
     addPointCollection(): void{
 	
     //var t = js_data;
@@ -104,9 +104,9 @@ export class AppComponent implements OnInit,AfterViewInit  {
 		//var alt = z.altitude;
 		console.log(filename);
 		if(type == 0){
-			/*if( otherFileList.indexOf(filename) < 0){
+			if( otherFileList.indexOf(filename) < 0){
 				otherFileList.push(filename);	
-			}*/
+			}
 			
 			this.otherPoints.add({
 				position : new Cesium.Cartesian3.fromDegrees(lon,lat),
@@ -115,9 +115,9 @@ export class AppComponent implements OnInit,AfterViewInit  {
 			});
 		}
 		if(type == 1){
-			/*if( rideFileList.indexOf(filename) < 0){
+			if( rideFileList.indexOf(filename) < 0){
 				rideFileList.push(filename);	
-			}*/
+			}
 			this.ridePoints.add({
 				position : new Cesium.Cartesian3.fromDegrees(lon,lat),
 				pixelSize : 5,
@@ -125,9 +125,9 @@ export class AppComponent implements OnInit,AfterViewInit  {
 			});
 		}
 		if(type == 2){
-			/*if( runFileList.indexOf(filename) < 0){
+			if( runFileList.indexOf(filename) < 0){
 				runFileList.push(filename);	
-			}*/
+			}
 			this.runPoints.add({
 				position : new Cesium.Cartesian3.fromDegrees(lon,lat),
 				pixelSize : 5,
@@ -137,6 +137,6 @@ export class AppComponent implements OnInit,AfterViewInit  {
 		
     }
   
-}
+}*/
 }
  
